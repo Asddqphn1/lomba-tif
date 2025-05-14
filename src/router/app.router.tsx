@@ -1,0 +1,26 @@
+import { createBrowserRouter } from "react-router-dom";
+import Login from "../page/login/page";
+import DaftarLomba from "../page/daftarlomba/page";
+import AdminDashboard from "@/page/admindashboard/page";
+import Register from "@/page/register/page";
+const router = createBrowserRouter([
+    {
+        path: '/admindashboard',
+        element: <AdminDashboard/>
+    },
+    {
+        path: '/login',
+        element: <Login/>
+    },
+    {
+        path: '/daftarlomba',
+        element: <DaftarLomba/>
+    },
+    {
+        path: '/register',
+        element: <Register/>
+    },
+    
+])
+
+export default router
