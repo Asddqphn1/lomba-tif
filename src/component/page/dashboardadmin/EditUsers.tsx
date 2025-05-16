@@ -23,36 +23,42 @@ const EditUsers: React.FC<props> = ({ id, username, email, open, onClose }) => {
     message: "",
   });
 
-  const handleClick = (id: string) => {
-    fetch(`http://localhost:3000/juri/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Ensure this is included if you're using cookies
-      body: JSON.stringify({
-        namaJuri: fullName,
-        id_lomba: competitionId,
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setAlert({
-            type: "success",
-            message: "User details updated successfully!",
-          });
-        } else {
-          throw new Error("Failed to update user details.");
-        }
-      })
-      .catch((error) => {
-        setAlert({
-          type: "error",
-          message: error.message || "Something went wrong, please try again.",
-        });
+  const handleClick = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/juri/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          namaJuri: fullName,
+          id_lomba: competitionId,
+        }),
       });
-  };
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Jika response tidak OK, gunakan pesan error dari backend
+        throw new Error(data.message || "Failed to update user details");
+      }
+
+      setAlert({
+        type: "success",
+        message: data.message || "Data juri berhasil diperbarui!",
+      });
+    } catch (error) {
+      setAlert({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan, silakan coba lagi",
+      });
+    }
+  };
+  
   if (!open) return null;
 
   return (

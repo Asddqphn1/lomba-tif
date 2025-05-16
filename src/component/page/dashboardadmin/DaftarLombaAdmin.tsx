@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardFooter
-
-} from "@/components/ui/card";
+import { Card, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import LombaSection from "./LombaSection";
-import { Icon } from "lucide-react";
+import { icons } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Competition {
   id: string;
@@ -25,11 +31,22 @@ const DaftarLombaAdmin: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({
+    type: null,
+    message: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
   >({});
   const [open, setOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [competitionToDelete, setCompetitionToDelete] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchCompetitions = async () => {
@@ -59,6 +76,49 @@ const DaftarLombaAdmin: React.FC = () => {
     fetchCompetitions();
   }, []);
 
+  const handleDelete = (id: string) => {
+    setCompetitionToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!competitionToDelete) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/daftarlomba/${competitionToDelete}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        setCompetitions(
+          competitions.filter((comp) => comp.id !== competitionToDelete)
+        );
+        setAlert({
+          type: "success",
+          message: "Lomba berhasil dihapus!",
+        });
+      } else {
+        throw new Error("Gagal menghapus lomba");
+      }
+    } catch (error) {
+      setAlert({
+        type: "error",
+        message:
+          error instanceof Error ? error.message : "Gagal menghapus lomba",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setCompetitionToDelete(null);
+    }
+  };
+
   const toggleDescription = (id: string) => {
     setExpandedDescriptions((prev) => ({
       ...prev,
@@ -77,10 +137,7 @@ const DaftarLombaAdmin: React.FC = () => {
     console.log("Edit competition with id:", id);
   };
 
-  const handleDelete = (id: string) => {
-    console.log("Delete competition with id:", id);
-  };
-
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -174,9 +231,9 @@ const DaftarLombaAdmin: React.FC = () => {
                     <p className="text-gray-600">
                       {expandedDescriptions[competition.id]
                         ? competition.deskripsi
-                        : `${competition.deskripsi.substring(0, 100)}...`}
+                        : `${competition.deskripsi.substring(0, 80)}...`}
                     </p>
-                    {competition.deskripsi.length > 100 && (
+                    {competition.deskripsi.length > 80 && (
                       <button
                         onClick={() => toggleDescription(competition.id)}
                         className="text-blue-600 hover:text-blue-800 text-sm mt-1"
@@ -190,10 +247,14 @@ const DaftarLombaAdmin: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-2 text-sm text-gray-500 mb-4">
                     <div className="flex items-center">
-                      <i className="far fa-calendar-alt mr-2"></i>
+                      <icons.Calendar className="h-6 w-6" />
                       <span>
                         {new Date(competition.tanggal).toLocaleDateString()}
                       </span>
+                    </div>
+                    <div className="flex items-center">
+                      <i className="fas fa-map-marker-alt mr-2"></i>
+                      <span>{competition.id}</span>
                     </div>
                     <div className="flex items-center">
                       <i className="fas fa-users mr-2"></i>
@@ -217,7 +278,6 @@ const DaftarLombaAdmin: React.FC = () => {
                       variant="outline"
                       className="text-blue-600 border-blue-600 hover:bg-blue-50"
                     >
-                    
                       Edit
                     </Button>
                     <Button
@@ -225,7 +285,6 @@ const DaftarLombaAdmin: React.FC = () => {
                       variant="outline"
                       className="text-red-600 border-red-600 hover:bg-red-50"
                     >
-        
                       Hapus
                     </Button>
                   </CardFooter>
@@ -251,6 +310,29 @@ const DaftarLombaAdmin: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini akan menghapus lomba secara permanen dan tidak dapat
+              dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <LombaSection open={open} onClose={() => setOpen(false)} />
     </div>
   );
