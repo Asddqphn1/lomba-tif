@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import LombaSection from './LombaSection';
 
 interface Competition {
   id: string;
@@ -22,6 +23,7 @@ const DaftarLombaAdmin: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   
   useEffect(() => {
     const fetchCompetitions = async () => {
@@ -86,6 +88,7 @@ const DaftarLombaAdmin: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
+            <Button variant="outline" onClick={() => setOpen(true)}>+ Tambah Lomba</Button>
           <div className="text-red-500 text-5xl mb-4">
             <i className="fas fa-exclamation-circle"></i>
           </div>
@@ -204,6 +207,7 @@ const DaftarLombaAdmin: React.FC = () => {
             </p>
           </div>
         )}
+        <LombaSection open={open} onClose={() => setOpen(false)} />
       </div>
     </div>
   );
