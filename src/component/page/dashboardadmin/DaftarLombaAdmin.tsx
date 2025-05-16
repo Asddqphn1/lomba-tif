@@ -84,7 +84,7 @@ const DaftarLombaAdmin: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen w-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-5xl mb-4">
             <i className="fas fa-exclamation-circle"></i>

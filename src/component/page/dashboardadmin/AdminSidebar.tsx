@@ -1,5 +1,5 @@
 import {
-  Sidebar, // Ubah nama impor untuk menghindari konflik
+  Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
@@ -13,19 +13,26 @@ import {
 import { icons } from "lucide-react";
 import { useState } from "react";
 
-import { PesertaSection } from "./PesrtaSection";
 import UsersSection from "./UsersSection";
-import DaftarLomba from "@/page/daftarlomba/page";
+
 import DaftarLombaAdmin from "./DaftarLombaAdmin";
 
+import PesertaSection from "./PesrtaSection";
 
 function AdminSidebar() {
   const [open, setOpen] = useState(true);
-  const [openLomba, setOpenLomba] = useState(false);
-  const [openPeserta, setOpenPeserta] = useState(false);
-  const [openJuri, setOpenJuri] = useState(false);
-  const [openUsers, setOpenUsers] = useState(false);
-  const [openAdmin, setOpenAdmin] = useState(false);
+  const [openSide, setOpenSide] = useState<string>("dashboard");
+
+  const renderContent = () => {
+    switch (openSide) {
+      case "peserta":
+        return <PesertaSection />;
+      case "users":
+        return <UsersSection />;
+      case "daftar-lomba":
+        return <DaftarLombaAdmin />;
+    }
+  };
 
   return (
     <div className="flex">
@@ -42,50 +49,55 @@ function AdminSidebar() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu className="mt-8">
-                  
-                    <SidebarMenuItem key="">
-                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
-                          <icons.House className="text-white" />
-                          <span className="text-white font-bold">
-                            Dashboard
-                          </span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                  <SidebarMenuItem key="dashboard">
+                    <SidebarMenuButton
+                      className="hover:bg-[#2E4EC5]"
+                      onClick={() => setOpenSide("dashboard")}
+                    >
+                      <icons.House className="text-white" />
+                      <span className="text-white font-bold">Dashboard</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
 
-                    <SidebarMenuItem key="daftar-lomba">
-                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
-                          <icons.Trophy className="text-white" />
-                          <span className="text-white font-bold">
-                            Daftar Lomba
-                          </span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                     <SidebarMenuItem key="peserta">
-                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
-                          <icons.Users className="text-white" />
-                          <span className="text-white font-bold">
-                            Peserta
-                          </span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                  <SidebarMenuItem key="daftar-lomba">
+                    <SidebarMenuButton
+                      className="hover:bg-[#2E4EC5]"
+                      onClick={() => setOpenSide("daftar-lomba")}
+                    >
+                      <icons.Trophy className="text-white" />
+                      <span className="text-white font-bold">Daftar Lomba</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
 
-                     <SidebarMenuItem key="juri">
-                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
-                          <icons.Star className="text-white" />
-                          <span className="text-white font-bold">
-                            Juri
-                          </span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                  <SidebarMenuItem key="peserta">
+                    <SidebarMenuButton
+                      className="hover:bg-[#2E4EC5]"
+                      onClick={() => setOpenSide("peserta")}
+                    >
+                      <icons.Users className="text-white" />
+                      <span className="text-white font-bold">Peserta</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
 
-                     <SidebarMenuItem key="Users">
-                      <SidebarMenuButton className="hover:bg-[#2E4EC5]" onClick={() => setOpenUsers(!openUsers)}>
-                          <icons.User className="text-white" />
-                          <span className="text-white font-bold">
-                            Users
-                          </span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                  <SidebarMenuItem key="juri">
+                    <SidebarMenuButton
+                      className="hover:bg-[#2E4EC5]"
+                      onClick={() => setOpenSide("juri")}
+                    >
+                      <icons.Star className="text-white" />
+                      <span className="text-white font-bold">Juri</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  <SidebarMenuItem key="users">
+                    <SidebarMenuButton
+                      className="hover:bg-[#2E4EC5]"
+                      onClick={() => setOpenSide("users")}
+                    >
+                      <icons.User className="text-white" />
+                      <span className="text-white font-bold">Users</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -93,7 +105,10 @@ function AdminSidebar() {
         </Sidebar>
         <SidebarTrigger />
       </SidebarProvider>
-     <DaftarLombaAdmin />
+     
+
+      {/* Bagian konten utama */}
+      <div className="flex-1 p-4">{renderContent()}</div>
     </div>
   );
 }
