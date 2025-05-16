@@ -27,7 +27,7 @@ const items = [
   },
   {
     title: "Peserta",
-    url: "#",
+    url: "daftarpeserta",
     icons: icons.User,
   },
   {

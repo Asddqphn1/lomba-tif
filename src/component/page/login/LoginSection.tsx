@@ -30,7 +30,7 @@ const LoginSection: React.FC = () => {
 
       const data = await response.json();
       console.log(data.message);
-      if(email === "pohan@gmail.com") {
+      if(email === "pohan@gmail.com" || email === "ahmad@gmail.com") {
         navigasi("/admindashboard", {replace: true});// biar gak balek login 
       }else{
         navigasi("/daftarlomba", {replace: true});// biar gak balek login
