@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { FormatTanggal } from "@/helper/FormatTanggal";
 import { useNavigate } from "react-router-dom";
 import LombaSection from "./LombaSection";
-import { set } from "date-fns";
 import { Pencil, Trash2 } from "lucide-react";
 
 
@@ -22,6 +21,9 @@ const DaftarJuriaAdmin : React.FC = () => {
     lomba: {
         nama: string;
         tanggal: string;
+    }
+    users: {
+        email: string;
     }
     nama_lomba: string;
     id: number;
@@ -72,6 +74,7 @@ const DaftarJuriaAdmin : React.FC = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-1/3">JURI</TableHead>
+                <TableHead className="w-1/3">EMAIL</TableHead>
               <TableHead className="w-1/4">CABANG LOMBA</TableHead>
               <TableHead className="w-1/6">TANGGAL LOMBA</TableHead>
               <TableHead className="w-1/6">AKSI</TableHead>
@@ -81,6 +84,7 @@ const DaftarJuriaAdmin : React.FC = () => {
             {dataJuri.map((juri) => (
               <TableRow key={juri.id}>
                 <TableCell className="font-bold">{juri.nama}</TableCell>
+                <TableCell className="font-bold">{juri.users?.email}</TableCell>
                 <TableCell className="font-bold">{juri.lomba?.nama}</TableCell>
                 <TableCell className="font-bold">{FormatTanggal(juri.lomba?.tanggal)}</TableCell>
                 <TableCell>

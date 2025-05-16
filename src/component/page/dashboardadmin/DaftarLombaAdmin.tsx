@@ -7,6 +7,7 @@ import {
 
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import LombaSection from "./LombaSection";
 
 interface Competition {
   id: string;
@@ -24,7 +25,11 @@ const DaftarLombaAdmin: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [expandedDescriptions, setExpandedDescriptions] = useState<
+    Record<string, boolean>
+  >({});
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const fetchCompetitions = async () => {
       try {
@@ -90,7 +95,6 @@ const DaftarLombaAdmin: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-            <Button variant="outline" onClick={() => setOpen(true)}>+ Tambah Lomba</Button>
           <div className="text-red-500 text-5xl mb-4">
             <i className="fas fa-exclamation-circle"></i>
           </div>
@@ -153,7 +157,7 @@ const DaftarLombaAdmin: React.FC = () => {
                 </div>
 
                 {/* Content */}
-                <div className="w-full md:w-2/3 p-4">
+                <div className="w-full p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-bold text-gray-800">
                       {competition.nama}
@@ -206,13 +210,13 @@ const DaftarLombaAdmin: React.FC = () => {
                     </div>
                   </div>
 
-                  <CardFooter className="flex justify-end gap-2 p-0">
+                  <CardFooter className="flex justify-between gap-2 p-0">
                     <Button
                       onClick={() => handleEdit(competition.id)}
                       variant="outline"
                       className="text-blue-600 border-blue-600 hover:bg-blue-50"
                     >
-                      <i className="far fa-edit mr-1"></i>
+                    
                       Edit
                     </Button>
                     <Button
@@ -220,7 +224,7 @@ const DaftarLombaAdmin: React.FC = () => {
                       variant="outline"
                       className="text-red-600 border-red-600 hover:bg-red-50"
                     >
-                      <i className="far fa-trash-alt mr-1"></i>
+        
                       Hapus
                     </Button>
                   </CardFooter>
@@ -245,7 +249,6 @@ const DaftarLombaAdmin: React.FC = () => {
             </p>
           </div>
         )}
-        <LombaSection open={open} onClose={() => setOpen(false)} />
       </div>
       <LombaSection open={open} onClose={() => setOpen(false)} />
     </div>
