@@ -15,6 +15,8 @@ import { useState } from "react";
 
 import { PesertaSection } from "./PesrtaSection";
 import UsersSection from "./UsersSection";
+import DaftarLomba from "@/page/daftarlomba/page";
+import DaftarLombaAdmin from "./DaftarLombaAdmin";
 
 
 function AdminSidebar() {
@@ -84,9 +86,6 @@ function AdminSidebar() {
                           </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-
-                    
-                
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -94,9 +93,7 @@ function AdminSidebar() {
         </Sidebar>
         <SidebarTrigger />
       </SidebarProvider>
-      <UsersSection openSidebar={openUsers}/>     
-          
-      <PesertaSection />
+     <DaftarLombaAdmin />
     </div>
   );
 }
