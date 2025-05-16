@@ -14,6 +14,9 @@ import { icons } from "lucide-react";
 import { useState } from "react";
 
 import UsersSection from "./UsersSection";
+
+import DaftarLombaAdmin from "./DaftarLombaAdmin";
+
 import PesertaSection from "./PesrtaSection";
 
 function AdminSidebar() {
@@ -26,6 +29,8 @@ function AdminSidebar() {
         return <PesertaSection />;
       case "users":
         return <UsersSection />;
+      case "daftar-lomba":
+        return <DaftarLombaAdmin />;
     }
   };
 
@@ -100,6 +105,7 @@ function AdminSidebar() {
         </Sidebar>
         <SidebarTrigger />
       </SidebarProvider>
+     
 
       {/* Bagian konten utama */}
       <div className="flex-1 p-4">{renderContent()}</div>
