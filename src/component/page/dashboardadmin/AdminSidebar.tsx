@@ -12,38 +12,18 @@ import {
 } from "@/components/ui/sidebar";
 import { icons } from "lucide-react";
 import { useState } from "react";
-import { UsersSection } from "./UsersSection";
 
-const items = [
-  {
-    title: "Dashboard",
-    url: "#",
-    icons: icons.House,
-  },
-  {
-    title: "Daftar Lomba",
-    url: "#",
-    icons: icons.Trophy,
-  },
-  {
-    title: "Peserta",
-    url: "daftarpeserta",
-    icons: icons.User,
-  },
-  {
-    title: "Juri",
-    url: "#",
-    icons: icons.Star,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icons: icons.Settings,
-  },
-];
+import { PesertaSection } from "./PesrtaSection";
+import UsersSection from "./UsersSection";
+
 
 function AdminSidebar() {
   const [open, setOpen] = useState(true);
+  const [openLomba, setOpenLomba] = useState(false);
+  const [openPeserta, setOpenPeserta] = useState(false);
+  const [openJuri, setOpenJuri] = useState(false);
+  const [openUsers, setOpenUsers] = useState(false);
+  const [openAdmin, setOpenAdmin] = useState(false);
 
   return (
     <div className="flex">
@@ -60,18 +40,53 @@ function AdminSidebar() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu className="mt-8">
-                  {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild className="hover:bg-[#2E4EC5]">
-                        <a href={item.url}>
-                          <item.icons className="text-white" />
+                  
+                    <SidebarMenuItem key="">
+                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
+                          <icons.House className="text-white" />
                           <span className="text-white font-bold">
-                            {item.title}
+                            Dashboard
                           </span>
-                        </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
+
+                    <SidebarMenuItem key="daftar-lomba">
+                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
+                          <icons.Trophy className="text-white" />
+                          <span className="text-white font-bold">
+                            Daftar Lomba
+                          </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                     <SidebarMenuItem key="peserta">
+                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
+                          <icons.Users className="text-white" />
+                          <span className="text-white font-bold">
+                            Peserta
+                          </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                     <SidebarMenuItem key="juri">
+                      <SidebarMenuButton className="hover:bg-[#2E4EC5]">
+                          <icons.Star className="text-white" />
+                          <span className="text-white font-bold">
+                            Juri
+                          </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                     <SidebarMenuItem key="Users">
+                      <SidebarMenuButton className="hover:bg-[#2E4EC5]" onClick={() => setOpenUsers(!openUsers)}>
+                          <icons.User className="text-white" />
+                          <span className="text-white font-bold">
+                            Users
+                          </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    
+                
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -79,9 +94,9 @@ function AdminSidebar() {
         </Sidebar>
         <SidebarTrigger />
       </SidebarProvider>
-      <UsersSection/>     
+      <UsersSection openSidebar={openUsers}/>     
           
-      {/* <PesertaSection /> */}
+      <PesertaSection />
     </div>
   );
 }

@@ -12,7 +12,11 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react"; // Correct import for icons
 import EditUsers from "./EditUsers";
 
-export function UsersSection() {
+interface UsersSectionProps {
+  openSidebar: boolean;
+}
+
+const UsersSection: React.FC<UsersSectionProps> = ({ openSidebar }) => {
   interface Peserta {
     id: string;
     nama: string;
@@ -55,7 +59,7 @@ export function UsersSection() {
   };
 
   return (
-    <div className="p-6">
+    <div className={`p-6 ${openSidebar ? "block" : "hidden"}`}>
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">User Management</h1>
       </div>
@@ -115,3 +119,5 @@ export function UsersSection() {
     </div>
   );
 }
+
+export default UsersSection;
