@@ -30,7 +30,7 @@ const LoginSection: React.FC = () => {
 
       const data = await response.json();
       console.log(data.message);
-      if(email === "pohan@gmail.com") {
+      if(email === "pohan@gmail.com" || email === "ahmad@gmail.com") {
         navigasi("/admindashboard", {replace: true});// biar gak balek login 
       }else{
         navigasi("/daftarlomba", {replace: true});// biar gak balek login
@@ -41,8 +41,8 @@ const LoginSection: React.FC = () => {
   };
 
   return (
-    <div className="bg-[url(/logo.png)] bg-no-repeat bg-cover">
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 backdrop-blur-lg">
+    <div className="bg-[url(/logo.png)] bg-no-repeat bg-cover h-screen">
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 backdrop-blur-lg h-screen">
         <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-extrabold text-blue-600">
