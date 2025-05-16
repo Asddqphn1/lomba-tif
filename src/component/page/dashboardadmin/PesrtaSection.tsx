@@ -12,7 +12,9 @@ import { FormatTanggal } from "@/helper/FormatTanggal";
 import { useNavigate } from "react-router-dom";
 import LombaSection from "./LombaSection";
 
-export function PesertaSection() {
+
+
+const PesertaSection : React.FC = () => {
   interface peserta {
     nama_peserta: string;
     nama_lomba: string;
@@ -94,3 +96,5 @@ export function PesertaSection() {
     </div>
   );
 }
+
+export default PesertaSection
