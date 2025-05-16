@@ -18,6 +18,7 @@ import UsersSection from "./UsersSection";
 import DaftarLombaAdmin from "./DaftarLombaAdmin";
 
 import PesertaSection from "./PesrtaSection";
+import DaftarJuriaAdmin from "./DaftarJuriaAdmin";
 
 function AdminSidebar() {
   const [open, setOpen] = useState(true);
@@ -31,6 +32,8 @@ function AdminSidebar() {
         return <UsersSection />;
       case "daftar-lomba":
         return <DaftarLombaAdmin />;
+      case "juri":
+        return <DaftarJuriaAdmin />;
     }
   };
 
