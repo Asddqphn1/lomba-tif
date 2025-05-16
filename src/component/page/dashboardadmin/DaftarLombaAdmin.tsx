@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import LombaSection from "./LombaSection";
-import { Icon } from "lucide-react";
 
 interface Competition {
   id: string;
