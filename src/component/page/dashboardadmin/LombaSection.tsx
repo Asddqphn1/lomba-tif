@@ -170,67 +170,68 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage(null); // Reset error message sebelum submit baru
+    setErrorMessage(null);
 
     if (validateForm()) {
       setIsSubmitting(true);
 
       try {
         const payload = {
-          ...formData,
+          id: formData.id,
+          nama: formData.nama,
           tanggal: new Date(formData.tanggal).toISOString(),
+          lokasi: formData.lokasi,
+          url: formData.url, // Pastikan nama field sesuai dengan backend
           bataswaktu: new Date(formData.bataswaktu).toISOString(),
-          url_gambar: formData.url,
+          deskripsi: formData.deskripsi,
           jenis_lomba: formData.jenis_lomba.toUpperCase(),
-          // Jika jenis lomba INDIVIDU, set jumlah_anggota ke 1
           jumlah_anggota:
-            formData.jenis_lomba === "INDIVIDU" ? "1" : formData.jumlah_anggota,
+            formData.jenis_lomba === "TIM"
+              ? Number(formData.jumlah_anggota)
+              : null, // Kirim null untuk INDIVIDU
         };
 
         const response = await fetch("http://localhost:3000/daftarlomba", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(payload),
         });
 
-        const data = await response.json();
-        console.log(data);
-
         if (!response.ok) {
-          throw new Error(data.message || "Gagal menyimpan data lomba");
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Gagal menyimpan data lomba");
         }
 
-        if (data.status === "Gagal") {
-          throw new Error(data.message || "Lomba sudah terdaftar");
-        }
+        const data = await response.json();
 
         setIsSuccess(true);
         Swal.fire({
-          title: "Tambah Lomba",
-          text: "Lomba Berhasil ditambahkan",
+          title: "Sukses",
+          text: data.message || "Lomba berhasil ditambahkan",
           icon: "success",
-          confirmButtonText: "OK",
         });
+
         handleReset();
-        // Tutup modal setelah 2 detik jika sukses
-        setTimeout(() => {
-          onClose();
-          setIsSuccess(false);
-        }, 2000);
+        setTimeout(() => onClose(), 2000);
       } catch (error) {
         console.error("Error:", error);
         setErrorMessage(
-          error instanceof Error ? error.message : "Gagal menyimpan data lomba"
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat menyimpan data"
         );
+        Swal.fire({
+          title: "Error",
+          text: error instanceof Error ? error.message : "Terjadi kesalahan",
+          icon: "error",
+        });
       } finally {
         setIsSubmitting(false);
       }
     }
   };
-
+  
   const handleReset = () => {
     setFormData({
       id: "",

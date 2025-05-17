@@ -25,6 +25,7 @@ interface Competition {
   url: string;
   bataswaktu: string;
   jenis_lomba: "INDIVIDU" | "TIM";
+  jumlah_tim: number
 }
 
 const DaftarLombaAdmin: React.FC = () => {
@@ -253,21 +254,33 @@ const DaftarLombaAdmin: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex items-center">
-                      <icons.Hash/>
+                      <icons.Hash />
                       <span>{competition.id}</span>
                     </div>
                     <div className="flex items-center">
-                      <icons.MapPinned/>
+                      <icons.MapPinned />
                       <span>{competition.lokasi}</span>
                     </div>
                     <div className="flex items-center">
-                      {competition.jenis_lomba === "TIM" ? <icons.Users/> : <icons.User/>}
-                      
-                      <span>{competition.jenis_lomba}</span>
+                      {competition.jenis_lomba === "TIM" ? (
+                        <icons.Users />
+                      ) : (
+                        <icons.User />
+                      )}
+
+                      <span>
+                        {competition.jenis_lomba}{" "}
+                        {competition.jenis_lomba === "TIM" ? (
+                         "Anggota Tim: " + competition.jumlah_tim
+                        ) : (
+                          " "
+                        )}
+                      </span>
                     </div>
                     <div className="flex items-center">
                       <span className="text-red-600">
-                        Berakhir pada {new Date(competition.bataswaktu).toLocaleDateString()}
+                        Berakhir pada{" "}
+                        {new Date(competition.bataswaktu).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
