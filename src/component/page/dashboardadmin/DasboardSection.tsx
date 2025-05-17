@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { icons } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 
 export function DashboardSection() {
@@ -8,6 +9,7 @@ export function DashboardSection() {
   const [juri, setJuri] = useState([])
   const [lomba, setLomba] = useState([])
   const [users, setUsers] = useState([])
+  const navigate = useNavigate()
 
   
   useEffect( () => {
@@ -18,7 +20,13 @@ export function DashboardSection() {
       },
       credentials: "include",
     })
-    .then(response => response.json())
+    .then(response => {response.json()
+      if (response.status === 401) {
+        // If token is expired, redirect to login
+        navigate("/adminonly", { replace: true });
+      }
+      return response.json();
+    })
     .then(data => setPeserta(data.data))
     
   }, [])

@@ -3,10 +3,15 @@ import Login from "../page/login/page";
 import DaftarLomba from "../page/daftarlomba/page";
 import AdminDashboard from "@/page/admindashboard/page";
 import Register from "@/page/register/page";
+import AdminOnly from "@/page/adminonly/page";
 const router = createBrowserRouter([
     {
         path: '/admindashboard',
         element: <AdminDashboard/>
+    },
+    {
+        path: '/adminonly',
+        element: <AdminOnly/>
     },
     {
         path: '/login',
