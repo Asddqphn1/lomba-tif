@@ -247,27 +247,27 @@ const DaftarLombaAdmin: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-2 text-sm text-gray-500 mb-4">
                     <div className="flex items-center">
-                      <icons.Calendar className="h-6 w-6" />
+                      <icons.CalendarDays className="h-6 w-6" />
                       <span>
                         {new Date(competition.tanggal).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex items-center">
-                      <i className="fas fa-map-marker-alt mr-2"></i>
+                      <icons.Hash/>
                       <span>{competition.id}</span>
                     </div>
                     <div className="flex items-center">
-                      <i className="fas fa-users mr-2"></i>
-                      <span>{competition.jenis_lomba}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <i className="fas fa-map-marker-alt mr-2"></i>
+                      <icons.MapPinned/>
                       <span>{competition.lokasi}</span>
                     </div>
                     <div className="flex items-center">
-                      <i className="far fa-clock mr-2"></i>
-                      <span>
-                        {new Date(competition.bataswaktu).toLocaleString()}
+                      {competition.jenis_lomba === "TIM" ? <icons.Users/> : <icons.User/>}
+                      
+                      <span>{competition.jenis_lomba}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-red-600">
+                        Berakhir pada {new Date(competition.bataswaktu).toLocaleDateString()}
                       </span>
                     </div>
                   </div>

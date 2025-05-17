@@ -20,6 +20,9 @@ import DaftarLombaAdmin from "./DaftarLombaAdmin";
 import PesertaSection from "./PesrtaSection";
 import DaftarJuriaAdmin from "./DaftarJuriaAdmin";
 import { DashboardSection } from "./DasboardSection";
+import AdminPage from "../admin-restricted-page/Adminpage";
+
+
 
 function AdminSidebar() {
   const [open, setOpen] = useState(true);

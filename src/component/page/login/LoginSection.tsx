@@ -30,10 +30,10 @@ const LoginSection: React.FC = () => {
 
       const data = await response.json();
       console.log(data.message);
-      if(email === "pohan@gmail.com" || email === "ahmad@gmail.com") {
-        navigasi("/admindashboard", {replace: true});// biar gak balek login 
-      }else{
-        navigasi("/daftarlomba", {replace: true});// biar gak balek login
+      if (email === "pohan@gmail.com" || email === "ahmad@gmail.com") {
+        navigasi("/admindashboard", { replace: true }); // biar gak balek login
+      } else {
+        navigasi("/daftarlomba", { replace: true }); // biar gak balek login
       }
     } catch (e: any) {
       setError(e.message);
@@ -187,10 +187,11 @@ const LoginSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 text-center cursor-pointer" onClick={() => navigasi("/register")}>
-            <p className="text-sm text-gray-600">
-              Don't have an account?
-            </p>
+          <div
+            className="mt-6 text-center cursor-pointer"
+            onClick={() => navigasi("/register")}
+          >
+            <p className="text-sm text-gray-600">Don't have an account?</p>
           </div>
         </div>
       </div>

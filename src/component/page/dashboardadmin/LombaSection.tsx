@@ -15,6 +15,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
+import Swal from "sweetalert2";
 
 interface prorpsOpen {
   open: boolean;
@@ -175,6 +176,12 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
         }
 
         setIsSuccess(true);
+        Swal.fire({
+          title: "Tambah Lomba",
+          text: "Lomba Berhasil ditambahkan",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
         handleReset();
         // Tutup modal setelah 2 detik jika sukses
         setTimeout(() => {
@@ -250,7 +257,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
             </CardHeader>
 
             <CardContent className="pt-6">
-              {isSuccess && (
+              {/* {isSuccess && (
                 <Alert className="mb-6 bg-green-50 border-green-500 text-green-700">
                   <AlertDescription>
                     <div className="flex items-center">
@@ -259,7 +266,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
                     </div>
                   </AlertDescription>
                 </Alert>
-              )}
+              )} */}
               {errorMessage && (
                 <Alert className="mb-6 bg-red-50 border-red-500 text-red-700">
                   <AlertDescription>
