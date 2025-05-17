@@ -20,7 +20,7 @@ export function DashboardSection() {
       },
       credentials: "include",
     })
-    .then(response => {response.json()
+    .then(response => {
       if (response.status === 401) {
         // If token is expired, redirect to login
         navigate("/adminonly", { replace: true });

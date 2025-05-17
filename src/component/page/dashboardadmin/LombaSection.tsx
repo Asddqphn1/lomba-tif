@@ -23,7 +23,17 @@ interface prorpsOpen {
 }
 
 const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    id: string;
+    nama: string;
+    tanggal: string;
+    lokasi: string;
+    bataswaktu: string;
+    deskripsi: string;
+    jenis_lomba: string;
+    jumlah_anggota: number | null;
+    url: string;
+  }>({
     id: "",
     nama: "",
     tanggal: "",
@@ -31,6 +41,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
     bataswaktu: "",
     deskripsi: "",
     jenis_lomba: "",
+    jumlah_anggota: null,
     url: "",
   });
 
@@ -74,6 +85,22 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
       newErrors.deskripsi = "Deskripsi lomba tidak boleh kosong";
     }
 
+    // Validasi jumlah anggota jika jenis lomba TIM
+    if (formData.jenis_lomba === "TIM" && !formData.jumlah_anggota) {
+      newErrors.jumlah_anggota = "Jumlah anggota tim harus diisi";
+    } else if (
+      formData.jenis_lomba === "TIM" &&
+      isNaN(Number(formData.jumlah_anggota))
+    ) {
+      newErrors.jumlah_anggota = "Jumlah anggota harus berupa angka";
+    } else if (
+      (formData.jenis_lomba === "TIM" &&
+        Number(formData.jumlah_anggota) > 30) ||
+      Number(formData.jumlah_anggota) < 2
+    ) {
+      newErrors.jumlah_anggota = "Jumlah anggota maksimal 30 orang atau minimal 2 orang";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -100,6 +127,8 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
     setFormData({
       ...formData,
       jenis_lomba: value,
+      // Reset jumlah anggota jika jenis lomba diubah ke INDIVIDU
+      jumlah_anggota: value === "INDIVIDU" ? null : Number(formData.jumlah_anggota),
     });
   };
 
@@ -153,6 +182,9 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
           bataswaktu: new Date(formData.bataswaktu).toISOString(),
           url_gambar: formData.url,
           jenis_lomba: formData.jenis_lomba.toUpperCase(),
+          // Jika jenis lomba INDIVIDU, set jumlah_anggota ke 1
+          jumlah_anggota:
+            formData.jenis_lomba === "INDIVIDU" ? "1" : formData.jumlah_anggota,
         };
 
         const response = await fetch("http://localhost:3000/daftarlomba", {
@@ -208,6 +240,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
       bataswaktu: "",
       deskripsi: "",
       jenis_lomba: "",
+      jumlah_anggota: null,
       url: "",
     });
     setImagePreview(null);
@@ -257,16 +290,6 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
             </CardHeader>
 
             <CardContent className="pt-6">
-              {/* {isSuccess && (
-                <Alert className="mb-6 bg-green-50 border-green-500 text-green-700">
-                  <AlertDescription>
-                    <div className="flex items-center">
-                      <i className="fas fa-check-circle mr-2 text-green-500"></i>
-                      Lomba berhasil ditambahkan ke sistem!
-                    </div>
-                  </AlertDescription>
-                </Alert>
-              )} */}
               {errorMessage && (
                 <Alert className="mb-6 bg-red-50 border-red-500 text-red-700">
                   <AlertDescription>
@@ -478,6 +501,36 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
                       </div>
                     </RadioGroup>
                   </div>
+
+                  {/* Input jumlah anggota tim (hanya muncul jika jenis lomba TIM) */}
+                  {formData.jenis_lomba === "TIM" && (
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="jumlah_anggota"
+                        className="text-sm font-medium"
+                      >
+                        Jumlah Anggota Tim{" "}
+                        <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="jumlah_anggota"
+                        name="jumlah_anggota"
+                        type="number"
+                        min="2"
+                        value={Number(formData.jumlah_anggota)}
+                        onChange={handleInputChange}
+                        placeholder="Masukkan jumlah anggota tim (minimal 2)"
+                        className={
+                          errors.jumlah_anggota ? "border-red-500" : ""
+                        }
+                      />
+                      {errors.jumlah_anggota && (
+                        <p className="text-sm text-red-500">
+                          {errors.jumlah_anggota}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <Separator className="my-8" />

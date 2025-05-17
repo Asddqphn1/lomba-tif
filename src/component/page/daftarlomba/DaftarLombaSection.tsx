@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { icons } from "lucide-react";
 
 const DaftarLombaSection: React.FC = () => {
-  interface Lomba {
+  interface Competition {
     id: string;
     nama: string;
     deskripsi: string;
     tanggal: string;
     lokasi: string;
     url: string;
-    jenis_lomba: string;
+    bataswaktu: string;
+    jenis_lomba: "INDIVIDU" | "TIM";
   }
 
-  const [dataLomba, setDataLomba] = useState<Lomba[]>([]);
+  const [dataLomba, setDataLomba] = useState<Competition[]>([]);
   const [sudah_login, setSudah_login] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -87,17 +89,28 @@ const DaftarLombaSection: React.FC = () => {
                 </h2>
 
                 <div className="flex items-center text-gray-700 mb-2">
-                  <i className="fas fa-calendar-alt mr-2 text-indigo-600"></i>
-                  <span>{formatTanggalIndonesia(item.tanggal)}</span>
+                  <icons.CalendarDays />
+                  <span>
+                    {formatTanggalIndonesia(item.tanggal)} -{" "}
+                    {formatTanggalIndonesia(item.bataswaktu)}
+                  </span>
                 </div>
 
                 <div className="flex items-center text-gray-700 mb-4">
-                  <i className="fas fa-map-marker-alt mr-2 text-indigo-600"></i>
+                  <icons.MapPin />
                   <span>{item.lokasi}</span>
                 </div>
 
                 <div className="mt-4">
-                  <span>Kategori : {item.jenis_lomba}</span>
+                  <span className="flex">
+                    Kategori : {"  "}
+                    {item.jenis_lomba === "TIM" ? (
+                      <icons.Users />
+                    ) : (
+                      <icons.User />
+                    )}
+                    {item.jenis_lomba}
+                  </span>
                   <div className="text-gray-800 line-clamp-3 hover:line-clamp-none transition-all">
                     {item.deskripsi}
                   </div>
@@ -105,7 +118,7 @@ const DaftarLombaSection: React.FC = () => {
 
                 <div className="mt-6">
                   <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center !rounded-button whitespace-nowrap cursor-pointer">
-                    <i className="fas fa-info-circle mr-2"></i>
+                    <icons.Plus />
                     Daftar Lomba
                   </button>
                 </div>
