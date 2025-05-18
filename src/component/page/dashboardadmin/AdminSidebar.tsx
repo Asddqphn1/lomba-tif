@@ -20,6 +20,7 @@ import DaftarLombaAdmin from "./DaftarLombaAdmin";
 import PesertaSection from "./PesrtaSection";
 import DaftarJuriaAdmin from "./DaftarJuriaAdmin";
 import { DashboardSection } from "./DasboardSection";
+import ProfileSection from "../profile/ProfileSection";
 
 
 
@@ -40,6 +41,8 @@ function AdminSidebar() {
         return <DaftarJuriaAdmin />;
       case "dashboard":
         return <DashboardSection/>
+      case "profile":
+        return <ProfileSection/>
       default :
         return <DashboardSection/>
     }
@@ -109,6 +112,15 @@ function AdminSidebar() {
                       <span className="text-white font-bold">Users</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem key="profile">
+                    <SidebarMenuButton
+                      className="hover:bg-[#2E4EC5]"
+                      onClick={() => setOpenSide("profile")}
+                    >
+                      <icons.UserRound className="text-white" />
+                      <span className="text-white font-bold">Profile</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -116,7 +128,6 @@ function AdminSidebar() {
         </Sidebar>
         <SidebarTrigger />
       </SidebarProvider>
-     
 
       {/* Bagian konten utama */}
       <div className="flex-1 p-4">{renderContent()}</div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginSection: React.FC = () => {
@@ -7,6 +7,7 @@ const LoginSection: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [role, setRole] = useState<string | null>(null); // Explicitly set role to null initially
   const navigasi = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -15,6 +16,7 @@ const LoginSection: React.FC = () => {
     setError("");
 
     try {
+      // 1. Lakukan login terlebih dahulu
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
@@ -30,13 +32,47 @@ const LoginSection: React.FC = () => {
 
       const data = await response.json();
       console.log(data.message);
-      if (email === "pohan@gmail.com" || email === "ahmad@gmail.com") {
-        navigasi("/admindashboard", { replace: true }); // biar gak balek login
+
+      // 2. Setelah login berhasil, ambil data user terbaru
+      const userResponse = await fetch("http://localhost:3000/auth/me", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!userResponse.ok) {
+        throw new Error("Failed to get user data");
+      }
+
+      const userData = await userResponse.json();
+      const currentRole = userData.user?.role;
+      setRole(currentRole); // Update role state
+
+      // 3. Navigasi berdasarkan role yang baru diambil
+      if (currentRole) {
+        switch (currentRole) {
+          case "ADMIN":
+            navigasi("/admindashboard", { replace: true });
+            break;
+          case "USERS":
+            navigasi("/daftarlomba", { replace: true });
+            break;
+          case "PESERTA":
+            navigasi("/pesertadashboard", { replace: true });
+            break;
+          case "JURI":
+            navigasi("/juridashboard", { replace: true });
+            break;
+          default:
+            navigasi("/login", { replace: true });
+        }
       } else {
-        navigasi("/daftarlomba", { replace: true }); // biar gak balek login
+        throw new Error("Role not found");
       }
     } catch (e: any) {
       setError(e.message);
+      setLoading(false);
     }
   };
 
