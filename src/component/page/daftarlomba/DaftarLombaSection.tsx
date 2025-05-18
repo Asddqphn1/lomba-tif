@@ -117,7 +117,7 @@ const DaftarLombaSection: React.FC = () => {
                 </div>
 
                 <div className="mt-6">
-                  <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center !rounded-button whitespace-nowrap cursor-pointer">
+                  <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center !rounded-button whitespace-nowrap cursor-pointer" onClick={() => navigate(`/daftarlomba/${item.id}`)}>
                     <icons.Plus />
                     Daftar Lomba
                   </button>

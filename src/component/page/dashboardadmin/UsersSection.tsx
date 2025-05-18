@@ -13,7 +13,6 @@ import { Pencil, Trash2 } from "lucide-react"; // Correct import for icons
 import EditUsers from "./EditUsers";
 import Swal from "sweetalert2";
 
-
 const UsersSection: React.FC = () => {
   interface Peserta {
     id: string;
@@ -25,7 +24,6 @@ const UsersSection: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean | string>(false); // State to control modal open for specific user
   const [dataPeserta, setDataPeserta] = useState<Peserta[]>([]);
-  
 
   useEffect(() => {
     fetch("http://localhost:3000/users", {
@@ -45,10 +43,9 @@ const UsersSection: React.FC = () => {
       .then((data) => {
         console.log(data.data);
         setDataPeserta(data.data);
-        
       })
-      .catch((error) => {console.error(error)
-        
+      .catch((error) => {
+        console.error(error);
       });
   }, []);
 
@@ -117,46 +114,42 @@ const UsersSection: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {dataPeserta
-              .filter((participant) => participant.role === "USERS")
-              .map((participant) => (
-                <TableRow key={participant.id}>
-                  <TableCell className="font-bold">
-                    {participant.nama}
-                  </TableCell>
-                  <TableCell>{participant.email}</TableCell>
-                  <TableCell>{participant.role}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditClick(participant.id)} // Open the modal for this user
-                    >
-                      <Pencil />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        handleDeleteUser(participant.id);
-                      }}
-                    >
-                      <Trash2 />
-                    </Button>
+            {dataPeserta.map((participant) => (
+              <TableRow key={participant.id}>
+                <TableCell className="font-bold">{participant.nama}</TableCell>
+                <TableCell>{participant.email}</TableCell>
+                <TableCell>{participant.role}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEditClick(participant.id)} // Open the modal for this user
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      handleDeleteUser(participant.id);
+                    }}
+                  >
+                    <Trash2 />
+                  </Button>
 
-                    {/* Show Edit modal for this participant */}
-                    {open === participant.id && (
-                      <EditUsers
-                        id={participant.id}
-                        username={participant.nama}
-                        email={participant.email}
-                        open={true}
-                        onClose={handleCloseModal}
-                      />
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+                  {/* Show Edit modal for this participant */}
+                  {open === participant.id && (
+                    <EditUsers
+                      id={participant.id}
+                      username={participant.nama}
+                      email={participant.email}
+                      open={true}
+                      onClose={handleCloseModal}
+                    />
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

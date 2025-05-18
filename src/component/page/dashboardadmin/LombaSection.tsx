@@ -31,7 +31,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
     bataswaktu: string;
     deskripsi: string;
     jenis_lomba: string;
-    jumlah_anggota: number | null;
+    jumlah_anggota: number | undefined;
     url: string;
   }>({
     id: "",
@@ -41,7 +41,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
     bataswaktu: "",
     deskripsi: "",
     jenis_lomba: "",
-    jumlah_anggota: null,
+    jumlah_anggota: undefined,
     url: "",
   });
 
@@ -128,7 +128,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
       ...formData,
       jenis_lomba: value,
       // Reset jumlah anggota jika jenis lomba diubah ke INDIVIDU
-      jumlah_anggota: value === "INDIVIDU" ? null : Number(formData.jumlah_anggota),
+      jumlah_anggota: value === "INDIVIDU" ? undefined : Number(formData.jumlah_anggota),
     });
   };
 
@@ -241,7 +241,7 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
       bataswaktu: "",
       deskripsi: "",
       jenis_lomba: "",
-      jumlah_anggota: null,
+      jumlah_anggota: undefined,
       url: "",
     });
     setImagePreview(null);

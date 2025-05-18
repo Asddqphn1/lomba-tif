@@ -4,6 +4,7 @@ import DaftarLomba from "../page/daftarlomba/page";
 import AdminDashboard from "@/page/admindashboard/page";
 import Register from "@/page/register/page";
 import AdminOnly from "@/page/adminonly/page";
+import Idlomba from "@/page/daftarlomba/idlomba/page";
 const router = createBrowserRouter([
     {
         path: '/admindashboard',
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
     {
         path: '/daftarlomba',
         element: <DaftarLomba/>
+    },
+    {
+        path : "/daftarlomba/:idlomba",
+        element: <Idlomba/>
     },
     {
         path: '/register',
