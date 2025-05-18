@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginSection: React.FC = () => {
@@ -7,7 +7,6 @@ const LoginSection: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [role, setRole] = useState<string | null>(null); // Explicitly set role to null initially
   const navigasi = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,7 +46,7 @@ const LoginSection: React.FC = () => {
 
       const userData = await userResponse.json();
       const currentRole = userData.user?.role;
-      setRole(currentRole); // Update role state
+      
 
       // 3. Navigasi berdasarkan role yang baru diambil
       if (currentRole) {

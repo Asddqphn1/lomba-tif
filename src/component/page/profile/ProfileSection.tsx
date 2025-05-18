@@ -63,7 +63,7 @@ const ProfileSection: React.FC = () => {
     };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 w-[93vw]">
+    <div className="min-h-[90vh] bg-gray-50 flex flex-col items-center justify-center p-4 w-[93vw]">
       <div className="w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Profil Pengguna
@@ -88,7 +88,7 @@ const ProfileSection: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center">
                 <div className="w-10 flex-shrink-0 text-gray-500">
-                  <i className="fas fa-envelope text-lg"></i>
+                  <icons.Mail/>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Email</p>
@@ -98,7 +98,7 @@ const ProfileSection: React.FC = () => {
 
               <div className="flex items-center">
                 <div className="w-10 flex-shrink-0 text-gray-500">
-                  <i className="fas fa-shield-alt text-lg"></i>
+                  <icons.Shield/>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Status Akun</p>
@@ -106,15 +106,7 @@ const ProfileSection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center">
-                <div className="w-10 flex-shrink-0 text-gray-500">
-                  <i className="fas fa-calendar-alt text-lg"></i>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Terakhir Login</p>
-                  <p className="font-medium">18 Mei 2025, 09:45 WIB</p>
-                </div>
-              </div>
+
             </div>
           </CardContent>
 

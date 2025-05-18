@@ -5,6 +5,7 @@ import AdminDashboard from "@/page/admindashboard/page";
 import Register from "@/page/register/page";
 import AdminOnly from "@/page/adminonly/page";
 import Idlomba from "@/page/daftarlomba/idlomba/page";
+import Pesertadashboard from "@/page/pesertadashboard/page";
 const router = createBrowserRouter([
     {
         path: '/admindashboard',
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
     {
         path: '/adminonly',
         element: <AdminOnly/>
+    },
+    {
+        path: '/pesertadashboard',
+        element: <Pesertadashboard/>
     },
     {
         path: '/login',
