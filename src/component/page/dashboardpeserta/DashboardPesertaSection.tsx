@@ -15,6 +15,7 @@ import { useState } from "react";
 import MainDashboard from "./MainDashboard";
 import DaftarLombaSection from "../daftarlomba/DaftarLombaSection";
 import ProfileSection from "../profile/ProfileSection";
+import SubmissionSection from "./SubmissionSection";
 
 const DashboardPesertaSection: React.FC = () => {
   const [open, setOpen] = useState<boolean>(true);
@@ -27,6 +28,8 @@ const DashboardPesertaSection: React.FC = () => {
         return <DaftarLombaSection />;
       case "profile":
         return <ProfileSection />;
+      case "submission":
+        return <SubmissionSection/>
     }
   };
   return (
@@ -79,7 +82,7 @@ const DashboardPesertaSection: React.FC = () => {
                       className="hover:bg-[#2E4EC5]"
                       onClick={() => setOpenSide("penilaian")}
                     >
-                      <icons.ChartPie className="text-white" />
+                      <icons.ClipboardList className="text-white" />
                       <span className="text-white font-bold">Penilaian</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
