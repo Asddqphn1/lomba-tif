@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { icons } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface LombaUser {
   id: string;
@@ -46,9 +47,11 @@ interface DataLombaUser {
 const SubmissionSection: React.FC = () => {
   const [lombaUser, setLombaUser] = useState<LombaUser[]>([]);
   const [error, setError] = useState("");
+  const [idPeserta, setIdpeserta] = useState<DataLombaUser[]>([])
   const [namaPeserta, setNamaPeserta] = useState<peserta[]>([])
   const [iduser, setIdUser] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
 
   useEffect(() => {
     // Fetch user data
@@ -76,6 +79,7 @@ const SubmissionSection: React.FC = () => {
       })
       .then((data) => {
         setLombaUser(data.data.map((item: DataLombaUser) => item.lomba))
+        setIdpeserta(data.data.map((item: DataLombaUser) => item.id_peserta_lomba))
         setNamaPeserta(data.data.map((item : DataLombaUser) => item.peserta))
       })
       .catch((err) => setError(err.message))
@@ -137,7 +141,7 @@ const SubmissionSection: React.FC = () => {
               </div>
             </CardContent>
             <CardFooter className="flex justify-center pb-6">
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button className="bg-primary hover:bg-primary/90" onClick={() => navigate(`/submit/${idPeserta[index]}`)}>
                 Submit Work
               </Button>
             </CardFooter>
