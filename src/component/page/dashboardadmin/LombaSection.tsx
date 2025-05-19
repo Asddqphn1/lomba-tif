@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
+import { icons } from "lucide-react";
 
 interface prorpsOpen {
   open: boolean;
@@ -410,7 +411,8 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
                           errors.gambar ? "border-red-300" : "border-gray-300"
                         }`}
                         onClick={() => fileInputRef.current?.click()}
-                      >
+                        >
+                        <icons.CloudUpload/>
                         <input
                           id="gambar"
                           name="gambar"
