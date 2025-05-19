@@ -29,6 +29,16 @@ interface lomba_user {
   bataswaktu: string;
 }
 
+interface pesertaLomba {
+  id_peserta_lomba: string;
+  lomba: {
+    id: string;
+    nama: string;
+    tanggal: string;
+    lokasi: string;
+    bataswaktu: string;
+  };
+}
 const MainDashboard: React.FC = () => {
   const [lombaUser, setLombauser] = useState<lomba_user[]>([]);
   const [lomba, setLomba] = useState([]);
@@ -74,7 +84,7 @@ const MainDashboard: React.FC = () => {
         return res.json();
       })
       .then((data) => {
-        setLombauser(data.data); // Changed from data.lomba to data.data
+        setLombauser(data.data.map((item : pesertaLomba) => item.lomba)); // Changed from data.lomba to data.data
         console.log("User lomba data:", data.data);
       })
       .catch((err) => setError(err.message))
