@@ -25,11 +25,13 @@ const LoginSection: React.FC = () => {
         credentials: "include",
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Login failed");
+        throw new Error(data.message);
       }
 
-      const data = await response.json();
+      
       console.log(data.message);
 
       // 2. Setelah login berhasil, ambil data user terbaru
