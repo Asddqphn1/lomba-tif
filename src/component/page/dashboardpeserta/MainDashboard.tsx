@@ -95,10 +95,10 @@ const MainDashboard: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   const data = {
-    labels: ["Lomba User", "Lomba Daftar"], // Labels for the bars
+    labels: ["Lomba Diikuti", "Daftar Lomba"], // Labels for the bars
     datasets: [
       {
-        label: "Total Count",
+        label: "Total Lomba", // Label for the dataset
         data: [lombaUser.length, lomba.length], // Counts for lombaUser and lomba
         backgroundColor: "rgba(75, 192, 192, 0.5)", // Color for the bars
         borderColor: "rgba(75, 192, 192, 1)", // Border color for the bars

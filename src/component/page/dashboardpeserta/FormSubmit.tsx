@@ -43,7 +43,7 @@ const FormSubmit: React.FC = () => {
       const file = e.target.files[0];
 
       // Validate file size (100KB max)
-      if (file.size > 1000 * 1024) {
+      if (file.size > 1000000 * 1024) {
         setErrors({ ...errors, file: "Ukuran file maksimum 100KB" });
         return;
       }
