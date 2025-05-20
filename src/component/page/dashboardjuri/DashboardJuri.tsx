@@ -11,31 +11,148 @@ interface profile {
     role: string;
 }
 
+interface Submission {
+    id: string;
+    pesertalomba_id: string;
+    file_url: string;
+    submission_time: string;
+    pesertalomba: {
+      id : string;
+      peserta_id : string;
+      lomba_id : string;
+      peserta: {
+        id: string;
+        nama: string;
+        user_id: string;
+        created_at: string;
+      }
+      lomba: {
+        id: string;
+        tanggal: string;
+        jenis_lomba: string;
+        lokasi: string;
+        nama: string;
+        url: string;
+        bataswaktu: string;
+        deksripsi: string;
+        jumlaht_tim: string;
+      }
+    } 
+    penilaian: {
+      id: string;
+      juri_id: string;
+      submission_id: string;
+      status_penilaian: string;
+      nilai_penilaian: number;
+      deksripsi_penilaian: string;
+      created_at: string;
+    }
+}
+
+interface juriId {
+  id : string;
+}
+
+
 const Dashboardjuri: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [selectedSubmission, setSelectedSubmission] = useState<number | null>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<string | null>(null);
   const [profile, setProfile] = useState<profile>();
+  const [submission, setSubmission] = useState<Submission[]>([]);
+  const [juriId, setjuriId] = useState<juriId>();
+  const [idUser, setIdUser] = useState<string | null>(null);
+  
+   
+  
+
+
+ useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/auth/me", {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to fetch user");
+      const data = await res.json();
+      setProfile(data.user);
+      setIdUser(data.user.id);
+      console.log("User ID:", data.user.id);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
+
+  fetchUser();
+}, []);
+
+  useEffect(() => {
+  if (idUser) {
+    const fetchJuriId = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/juri/${idUser}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to fetch juri data");
+        const data = await res.json();
+        setjuriId(data.data[0].id);
+        console.log("Juri ID:", data.data[0].id);
+      } catch (error) {
+        console.error("Error fetching juri data:", error);
+      }
+    };
+
+    fetchJuriId();
+  }
+}, [idUser]);
 
 
   useEffect(() => {
-      // Fetch user data
-      fetch("http://localhost:3000/auth/me", {
-        credentials: "include",
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch user");
-          return res.json();
-        })
-        .then((data) => setProfile(data.user))
-    }, []);
-    
+    // Fetch submissions after juriId is loaded
+    if (juriId) {
+      const fetchSubmissions = async () => {
+        try {
+          const res = await fetch(`http://localhost:3000/penilaian/${juriId}`, {
+            credentials: "include",
+          });
+          if (!res.ok) throw new Error("Failed to fetch submissions");
+          const data = await res.json();
+          setSubmission(data.data);
+          console.log("Submissions:", data.data.length);
+        } catch (error) {
+          console.error("Error fetching submissions:", error);
+        }
+      };
 
-  const submissions = [
-    { id: 1, name: 'Ahmad Fauzi', category: 'Tenis Meja Teknik Informatika', date: '15/05/2025', status: 'Belum Dinilai' },
-    { id: 2, name: 'Siti Nurhaliza', category: 'Tenis Meja Teknik Informatika', date: '16/05/2025', status: 'Belum Dinilai' },
-    { id: 3, name: 'Budi Santoso', category: 'Tenis Meja Teknik Informatika', date: '16/05/2025', status: 'Belum Dinilai' },
-    { id: 4, name: 'Dewi Kartika', category: 'Tenis Meja Teknik Informatika', date: '17/05/2025', status: 'Belum Dinilai' },
-  ];
+      fetchSubmissions();
+    }
+  }, [juriId]);
+
+ const handleFetchSubmission = async () => {
+  if (!selectedSubmission) return;
+
+  try {
+    const res = await fetch(`http://localhost:3000/submit/${selectedSubmission}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch submissions");
+
+    const data = await res.json();
+    setSubmission(data.data);
+    console.log("Submitpenilaian:", data.data);
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+  }
+};
+
+
+
 
   React.useEffect(() => {
     if (activeTab === 'dashboard') {
@@ -141,8 +258,11 @@ const Dashboardjuri: React.FC = () => {
               <i className="fas fa-file-alt text-blue-600 text-xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Submission Masuk</p>
-              <p className="text-2xl font-bold">4</p>
+              <p className="text-sm text-gray-500">Submission Total</p>
+              
+                <p className="text-2xl font-bold">{submission.length}</p>
+                
+        
             </div>
           </div>
         </div>
@@ -154,7 +274,7 @@ const Dashboardjuri: React.FC = () => {
             </div>
             <div>
               <p className="text-sm text-gray-500">Penilaian Pending</p>
-              <p className="text-2xl font-bold">4</p>
+              <p className="text-2xl font-bold">{}</p>
             </div>
           </div>
         </div>
@@ -200,21 +320,21 @@ const Dashboardjuri: React.FC = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Peserta</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lomba</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {submissions.slice(0, 3).map((submission) => (
+              {submission.slice(0, 3).map((submission) => (
                 <tr key={submission.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{submission.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{submission.category}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{submission.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{submission.pesertalomba.peserta.nama}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{submission.pesertalomba.lomba.nama}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{new Date(submission.submission_time).toLocaleDateString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                      {submission.status}
+                      {submission.penilaian.status_penilaian}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -222,7 +342,7 @@ const Dashboardjuri: React.FC = () => {
                       className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
                       onClick={() => {
                         setActiveTab('penilaian');
-                        setSelectedSubmission(submission.id);
+                        setSelectedSubmission(null);
                       }}
                     >
                       <i className="fas fa-star mr-1"></i> Nilai
@@ -252,7 +372,7 @@ const Dashboardjuri: React.FC = () => {
             <div className="relative mr-4">
               <input 
                 type="text" 
-                placeholder="Cari peserta..." 
+                placeholder="Cari peserta..."  
                 className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
@@ -278,14 +398,14 @@ const Dashboardjuri: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {submissions.map((submission) => (
+              {submission.map((submission) => (
                 <tr key={submission.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{submission.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{submission.category}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{submission.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{submission.pesertalomba.peserta.nama}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{submission.pesertalomba.lomba.nama}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{new Date(submission.submission_time).toLocaleDateString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                      {submission.status}
+                      {submission.penilaian.status_penilaian}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -293,8 +413,12 @@ const Dashboardjuri: React.FC = () => {
                       className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
                       onClick={() => {
                         setActiveTab('penilaian');
+                        handleFetchSubmission();
                         setSelectedSubmission(submission.id);
+                        
+                        
                       }}
+                      
                     >
                       <i className="fas fa-star mr-1"></i> Nilai
                     </button>
@@ -325,9 +449,9 @@ const Dashboardjuri: React.FC = () => {
   );
 
   const renderPenilaian = () => {
-    const submission = submissions.find(s => s.id === selectedSubmission);
     
-    if (!submission) {
+    const submit = submission.find((sub) => sub.id === selectedSubmission);
+    if (!submit) {
       return (
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Penilaian Submission</h1>
@@ -366,57 +490,36 @@ const Dashboardjuri: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <p className="text-sm text-gray-500">Nama Peserta</p>
-                  <p className="font-medium">{submission.name}</p>
+                  <p className="font-medium">{submit.pesertalomba.peserta.nama}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Lomba</p>
+                  <p className="font-medium">{submit.pesertalomba.lomba.nama}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Kategori Lomba</p>
-                  <p className="font-medium">{submission.category}</p>
+                  <p className="font-medium">{submit.pesertalomba.lomba.jenis_lomba}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Tanggal Submit</p>
-                  <p className="font-medium">{submission.date}</p>
+                  <p className="font-medium">{new Date(submit.submission_time).toLocaleDateString()}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                    {submission.status}
-                  </span>
-                </div>
+
               </div>
               
-              <div className="border-t pt-4">
-                <h3 className="font-medium mb-2">Deskripsi Karya</h3>
-                <p className="text-gray-700">
-                  Karya ini merupakan implementasi dari teknik permainan tenis meja dengan menggunakan teknologi informatika.
-                  Peserta telah mengembangkan sistem analisis gerakan dan strategi permainan yang dapat membantu pemain
-                  meningkatkan kemampuan mereka.
-                </p>
-              </div>
+              
             </div>
             
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold mb-4">File Submission</h2>
-              
-              <div className="border rounded-lg p-4 mb-4 flex items-center">
-                <div className="p-3 rounded-full bg-blue-100 mr-4">
-                  <i className="fas fa-file-pdf text-blue-600"></i>
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">Dokumentasi_Karya.pdf</p>
-                  <p className="text-sm text-gray-500">2.4 MB</p>
-                </div>
-                <button className="text-blue-600 hover:text-blue-800 cursor-pointer !rounded-button whitespace-nowrap">
-                  <i className="fas fa-download"></i>
-                </button>
-              </div>
               
               <div className="border rounded-lg p-4 flex items-center">
                 <div className="p-3 rounded-full bg-blue-100 mr-4">
                   <i className="fas fa-file-video text-blue-600"></i>
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium">Presentasi_Karya.mp4</p>
-                  <p className="text-sm text-gray-500">45.7 MB</p>
+                  <a href={submit.file_url} className="font-medium">{submit.file_url}</a>
+                  
                 </div>
                 <button className="text-blue-600 hover:text-blue-800 cursor-pointer !rounded-button whitespace-nowrap">
                   <i className="fas fa-download"></i>
