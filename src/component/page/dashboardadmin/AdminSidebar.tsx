@@ -12,22 +12,53 @@ import {
 } from "@/components/ui/sidebar";
 import { icons } from "lucide-react";
 import { useState } from "react";
+import { motion } from "framer-motion"; // Import motion from Framer Motion
 
 import UsersSection from "./UsersSection";
-
 import DaftarLombaAdmin from "./DaftarLombaAdmin";
-
 import PesertaSection from "./PesrtaSection";
 import DaftarJuriaAdmin from "./DaftarJuriaAdmin";
 import { DashboardSection } from "./DasboardSection";
 import ProfileSection from "../profile/ProfileSection";
 
-
-
-
 function AdminSidebar() {
   const [open, setOpen] = useState(true);
   const [openSide, setOpenSide] = useState<string>("dashboard");
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
+  const contentVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  };
 
   const renderContent = () => {
     switch (openSide) {
@@ -43,13 +74,18 @@ function AdminSidebar() {
         return <DashboardSection/>
       case "profile":
         return <ProfileSection/>
-      default :
+      default:
         return <DashboardSection/>
     }
   };
 
   return (
-    <div className="flex">
+    <motion.div 
+      className="flex"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <SidebarProvider
         defaultOpen={open}
         open={open}
@@ -58,69 +94,84 @@ function AdminSidebar() {
         <Sidebar>
           <SidebarContent className="bg-[#1E40AF]">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-white font-extrabold text-xl">
-                Admin Lomba{" "}
-              </SidebarGroupLabel>
+              <motion.div variants={itemVariants}>
+                <SidebarGroupLabel className="text-white font-extrabold text-xl">
+                  Admin Lomba{" "}
+                </SidebarGroupLabel>
+              </motion.div>
               <SidebarGroupContent>
                 <SidebarMenu className="mt-8">
-                  <SidebarMenuItem key="dashboard">
-                    <SidebarMenuButton
-                      className="hover:bg-[#2E4EC5]"
-                      onClick={() => setOpenSide("dashboard")}
-                    >
-                      <icons.House className="text-white" />
-                      <span className="text-white font-bold">Dashboard</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="dashboard">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("dashboard")}
+                      >
+                        <icons.House className="text-white" />
+                        <span className="text-white font-bold">Dashboard</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
 
-                  <SidebarMenuItem key="daftar-lomba">
-                    <SidebarMenuButton
-                      className="hover:bg-[#2E4EC5]"
-                      onClick={() => setOpenSide("daftar-lomba")}
-                    >
-                      <icons.Trophy className="text-white" />
-                      <span className="text-white font-bold">Daftar Lomba</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="daftar-lomba">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("daftar-lomba")}
+                      >
+                        <icons.Trophy className="text-white" />
+                        <span className="text-white font-bold">Daftar Lomba</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
 
-                  <SidebarMenuItem key="peserta">
-                    <SidebarMenuButton
-                      className="hover:bg-[#2E4EC5]"
-                      onClick={() => setOpenSide("peserta")}
-                    >
-                      <icons.Users className="text-white" />
-                      <span className="text-white font-bold">Peserta</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="peserta">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("peserta")}
+                      >
+                        <icons.Users className="text-white" />
+                        <span className="text-white font-bold">Peserta</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
 
-                  <SidebarMenuItem key="juri">
-                    <SidebarMenuButton
-                      className="hover:bg-[#2E4EC5]"
-                      onClick={() => setOpenSide("juri")}
-                    >
-                      <icons.Star className="text-white" />
-                      <span className="text-white font-bold">Juri</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="juri">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("juri")}
+                      >
+                        <icons.Star className="text-white" />
+                        <span className="text-white font-bold">Juri</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
 
-                  <SidebarMenuItem key="users">
-                    <SidebarMenuButton
-                      className="hover:bg-[#2E4EC5]"
-                      onClick={() => setOpenSide("users")}
-                    >
-                      <icons.User className="text-white" />
-                      <span className="text-white font-bold">Users</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem key="profile">
-                    <SidebarMenuButton
-                      className="hover:bg-[#2E4EC5]"
-                      onClick={() => setOpenSide("profile")}
-                    >
-                      <icons.UserRound className="text-white" />
-                      <span className="text-white font-bold">Profile</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="users">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("users")}
+                      >
+                        <icons.User className="text-white" />
+                        <span className="text-white font-bold">Users</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="profile">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("profile")}
+                      >
+                        <icons.UserRound className="text-white" />
+                        <span className="text-white font-bold">Profile</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -129,9 +180,15 @@ function AdminSidebar() {
         <SidebarTrigger />
       </SidebarProvider>
 
-      {/* Bagian konten utama */}
-      <div className="flex-1 p-4">{renderContent()}</div>
-    </div>
+      {/* Bagian konten utama dengan animasi */}
+      <motion.div 
+        className="flex-1 p-4"
+        variants={contentVariants}
+        key={openSide} // This ensures animation plays when content changes
+      >
+        {renderContent()}
+      </motion.div>
+    </motion.div>
   );
 }
 

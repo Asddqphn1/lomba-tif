@@ -86,13 +86,16 @@ const FormSubmit: React.FC = () => {
       formdata.append("file", imageFile);
       formdata.append("upload_preset", "lombapost");
 
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dkkoi3qc0/image/upload",
-        {
-          method: "POST",
-          body: formdata,
-        }
-      );
+      // Check if the file is a PDF or image
+      const endpoint =
+        imageFile.type === "application/pdf"
+          ? "https://api.cloudinary.com/v1_1/dkkoi3qc0/raw/upload"
+          : "https://api.cloudinary.com/v1_1/dkkoi3qc0/image/upload";
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: formdata,
+      });
 
       const data = await response.json();
       await handleSubmit(data.secure_url);
@@ -103,6 +106,7 @@ const FormSubmit: React.FC = () => {
       setIsUploading(false);
     }
   };
+  
 
   const handleResetFile = () => {
     setImageFile(null);
