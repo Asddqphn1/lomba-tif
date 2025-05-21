@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import { icons } from "lucide-react";
+import { FormatTanggal } from "@/helper/FormatTanggal";
 
 interface profile {
   id: string;
@@ -457,7 +458,7 @@ const Dashboardjuri: React.FC = () => {
                     {submission.pesertalomba.lomba.nama}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(submission.submission_time).toLocaleDateString()}
+                    {FormatTanggal(submission.submission_time, true)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
@@ -569,7 +570,7 @@ const Dashboardjuri: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-500">Tanggal Submit</p>
                   <p className="font-medium">
-                    {new Date(submit.submission_time).toLocaleDateString()}
+                    {FormatTanggal(submit.submission_time, true)}
                   </p>
                 </div>
               </div>
