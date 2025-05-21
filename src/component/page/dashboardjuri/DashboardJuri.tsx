@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import { icons } from "lucide-react";
 import { FormatTanggal } from "@/helper/FormatTanggal";
+import Swal from "sweetalert2";
+import ProfileSection from "../profile/ProfileSection";
 
 interface profile {
   id: string;
@@ -63,6 +65,11 @@ const Dashboardjuri: React.FC = () => {
   const [submission, setSubmission] = useState<Submission[]>([]);
   const [juriId, setjuriId] = useState<juriId>();
   const [idUser, setIdUser] = useState<string | null>(null);
+  const [nilai, setNilai] = useState<number>(0);
+  const [deskripsi, setDeskripsi] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+
 
   const handleDownload = (url: string) => {
     if (!url) return;
@@ -161,6 +168,88 @@ const Dashboardjuri: React.FC = () => {
       console.error("Error fetching submissions:", error);
     }
   };
+
+  const resetForm = () => {
+    setNilai(0);
+    setDeskripsi("");
+  };
+
+  const showError = (message: string) => {
+    Swal.fire({
+      icon: "error",
+      title: "Gagal",
+      text: message,
+    });
+  };
+
+  const handleSubmitPenilaian = async () => {
+    if (nilai < 1 || nilai > 100) {
+      showError("Nilai harus antara 1 hingga 100.");
+      return;
+    }
+
+    if (deskripsi.trim().length < 5) {
+      showError("Deskripsi penilaian minimal 5 karakter.");
+      return;
+    }
+
+    const payload = {
+      nilai_penilaian: nilai,
+      deskripsi_penilaian: deskripsi,
+    };
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `http://localhost:3000/penilaian/${selectedSubmission}/${juriId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        showError(result.message || "Gagal mengirim penilaian.");
+        return;
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Sukses",
+        text: "Penilaian berhasil disimpan!",
+      });
+
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      showError("Terjadi kesalahan saat mengirim penilaian.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    Swal.fire({
+      title: "Reset Form?",
+      text: "Data nilai dan deskripsi akan dikosongkan.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#aaa",
+      confirmButtonText: "Ya, reset!",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        resetForm();
+        Swal.fire("Direset!", "Form berhasil dikosongkan.", "success");
+      }
+    });
+  };
+
 
   React.useEffect(() => {
     if (activeTab === "dashboard") {
@@ -296,7 +385,7 @@ const Dashboardjuri: React.FC = () => {
             </div>
             <div>
               <p className="text-sm text-gray-500">Penilaian Pending</p>
-              <p className="text-2xl font-bold">{}</p>
+              <p className="text-2xl font-bold">{ }</p>
             </div>
           </div>
         </div>
@@ -620,7 +709,10 @@ const Dashboardjuri: React.FC = () => {
             <div className="bg-white rounded-lg shadow p-6 sticky top-6">
               <h2 className="text-lg font-semibold mb-4">Form Penilaian</h2>
 
-              <form>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmitPenilaian();
+              }}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {" "}
@@ -628,8 +720,10 @@ const Dashboardjuri: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    min="1"
-                    max="100"
+                    min={1}
+                    max={100}
+                    value={nilai}
+                    onChange={(e) => setNilai(parseInt(e.target.value))}
                     className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -640,6 +734,8 @@ const Dashboardjuri: React.FC = () => {
                   </label>
                   <textarea
                     rows={4}
+                    value={deskripsi}
+                    onChange={(e) => setDeskripsi(e.target.value)}
                     className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Berikan catatan atau komentar untuk peserta..."
                   ></textarea>
@@ -648,15 +744,22 @@ const Dashboardjuri: React.FC = () => {
                 <div className="flex justify-between">
                   <button
                     type="button"
+                    onClick={handleReset}
+                    disabled={loading}
                     className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer !rounded-button whitespace-nowrap"
                   >
                     Reset
                   </button>
                   <button
-                    type="button"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer !rounded-button whitespace-nowrap"
+                    type="submit"
+                    disabled={loading}
+                    className={`px-4 py-2 rounded-lg text-white ${loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                      }`}
                   >
-                    Simpan Penilaian
+                    {loading ? "Menyimpan..." : "Simpan Penilaian"}
+
                   </button>
                 </div>
               </form>
@@ -668,54 +771,7 @@ const Dashboardjuri: React.FC = () => {
   };
 
   const renderProfile = () => (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Profil Juri</h1>
-
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/3 flex justify-center mb-6 md:mb-0">
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                <icons.User className="text-blue-600 w-16 h-16" />
-              </div>
-              <h2 className="text-xl font-bold">{profile?.nama}</h2>
-              <p className="text-gray-500">{profile?.role}</p>
-            </div>
-          </div>
-
-          <div className="md:w-2/3 md:pl-8 md:border-l">
-            <h3 className="text-lg font-semibold mb-4">Informasi Juri</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{profile?.email}</p>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">
-                Statistik Penilaian
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500">Total Dinilai</p>
-                  <p className="text-2xl font-bold">0</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500">Menunggu Penilaian</p>
-                  <p className="text-2xl font-bold">4</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500">Rata-rata Nilai</p>
-                  <p className="text-2xl font-bold">-</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ProfileSection />
   );
 
   return (
@@ -730,11 +786,10 @@ const Dashboardjuri: React.FC = () => {
           <ul>
             <li className="mb-2">
               <button
-                className={`flex items-center w-full px-4 py-2 rounded-lg ${
-                  activeTab === "dashboard"
-                    ? "bg-blue-800"
-                    : "hover:bg-blue-600"
-                } cursor-pointer !rounded-button whitespace-nowrap`}
+                className={`flex items-center w-full px-4 py-2 rounded-lg ${activeTab === "dashboard"
+                  ? "bg-blue-800"
+                  : "hover:bg-blue-600"
+                  } cursor-pointer !rounded-button whitespace-nowrap`}
                 onClick={() => setActiveTab("dashboard")}
               >
                 <icons.House className="w-6 mr-2" />
@@ -743,11 +798,10 @@ const Dashboardjuri: React.FC = () => {
             </li>
             <li className="mb-2">
               <button
-                className={`flex items-center w-full px-4 py-2 rounded-lg ${
-                  activeTab === "submission"
-                    ? "bg-blue-800"
-                    : "hover:bg-blue-600"
-                } cursor-pointer !rounded-button whitespace-nowrap`}
+                className={`flex items-center w-full px-4 py-2 rounded-lg ${activeTab === "submission"
+                  ? "bg-blue-800"
+                  : "hover:bg-blue-600"
+                  } cursor-pointer !rounded-button whitespace-nowrap`}
                 onClick={() => setActiveTab("submission")}
               >
                 <icons.FileCheck className="w-6 mr-2" />
@@ -756,11 +810,10 @@ const Dashboardjuri: React.FC = () => {
             </li>
             <li className="mb-2">
               <button
-                className={`flex items-center w-full px-4 py-2 rounded-lg ${
-                  activeTab === "penilaian"
-                    ? "bg-blue-800"
-                    : "hover:bg-blue-600"
-                } cursor-pointer !rounded-button whitespace-nowrap`}
+                className={`flex items-center w-full px-4 py-2 rounded-lg ${activeTab === "penilaian"
+                  ? "bg-blue-800"
+                  : "hover:bg-blue-600"
+                  } cursor-pointer !rounded-button whitespace-nowrap`}
                 onClick={() => setActiveTab("penilaian")}
               >
                 <icons.ClipboardList className="w-6 mr-2" />
@@ -769,9 +822,8 @@ const Dashboardjuri: React.FC = () => {
             </li>
             <li className="mb-2">
               <button
-                className={`flex items-center w-full px-4 py-2 rounded-lg ${
-                  activeTab === "profile" ? "bg-blue-800" : "hover:bg-blue-600"
-                } cursor-pointer !rounded-button whitespace-nowrap`}
+                className={`flex items-center w-full px-4 py-2 rounded-lg ${activeTab === "profile" ? "bg-blue-800" : "hover:bg-blue-600"
+                  } cursor-pointer !rounded-button whitespace-nowrap`}
                 onClick={() => setActiveTab("profile")}
               >
                 <icons.User className="w-6 mr-2" />
