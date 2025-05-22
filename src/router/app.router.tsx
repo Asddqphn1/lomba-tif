@@ -8,6 +8,7 @@ import Idlomba from "@/page/daftarlomba/idlomba/page";
 import Pesertadashboard from "@/page/pesertadashboard/page";
 import Submitform from "@/page/pesertadashboard/submitform/Page";
 import Dashboardjuri from "@/component/page/dashboardjuri/DashboardJuri";
+import Klasmen from "@/component/page/dashboardpeserta/Klasmen";
 
 const router = createBrowserRouter([
     {
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
         element: <AdminOnly/>
     },
     {
-        path: '/pesertadashboard',
+        path: '/pesertadashboard/:idUser',
         element: <Pesertadashboard/>
     },
     {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
 
         path : "/submit/:idpeserta",
         element: <Submitform/>
+    },
+    {
+        path: "klasmen/:idLomba",
+        element: <Klasmen/>
     }
     
 ])

@@ -60,7 +60,7 @@ const LoginSection: React.FC = () => {
             navigasi("/daftarlomba", { replace: true });
             break;
           case "PESERTA":
-            navigasi("/pesertadashboard", { replace: true });
+            navigasi(`/pesertadashboard/${userData.user?.id}`, { replace: true });
             break;
           case "JURI":
             navigasi("/juridashboard", { replace: true });
