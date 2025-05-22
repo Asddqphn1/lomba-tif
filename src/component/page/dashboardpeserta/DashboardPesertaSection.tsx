@@ -16,6 +16,7 @@ import MainDashboard from "./MainDashboard";
 import DaftarLombaSection from "../daftarlomba/DaftarLombaSection";
 import ProfileSection from "../profile/ProfileSection";
 import SubmissionSection from "./SubmissionSection";
+import Penilaian from "./Penilaian";
 
 const DashboardPesertaSection: React.FC = () => {
   const [open, setOpen] = useState<boolean>(true);
@@ -30,6 +31,8 @@ const DashboardPesertaSection: React.FC = () => {
         return <ProfileSection />;
       case "submission":
         return <SubmissionSection/>
+      case "penilaian":
+        return <Penilaian/>
     }
   };
   return (
