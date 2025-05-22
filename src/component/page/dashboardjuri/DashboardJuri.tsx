@@ -65,7 +65,7 @@ const Dashboardjuri: React.FC = () => {
   const [submission, setSubmission] = useState<Submission[]>([]);
   const [juriId, setjuriId] = useState<juriId>();
   const [idUser, setIdUser] = useState<string | null>(null);
-  const [nilai, setNilai] = useState<number>(0);
+  const [nilai, setNilai] = useState<number>();
   const [deskripsi, setDeskripsi] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -183,13 +183,8 @@ const Dashboardjuri: React.FC = () => {
   };
 
   const handleSubmitPenilaian = async () => {
-    if (nilai < 1 || nilai > 100) {
+    if (nilai == null || nilai > 100) {
       showError("Nilai harus antara 1 hingga 100.");
-      return;
-    }
-
-    if (deskripsi.trim().length < 5) {
-      showError("Deskripsi penilaian minimal 5 karakter.");
       return;
     }
 
@@ -206,6 +201,7 @@ const Dashboardjuri: React.FC = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(payload),
         }
       );
@@ -716,9 +712,10 @@ const Dashboardjuri: React.FC = () => {
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {" "}
-                    Nilai (1-100)
+                    Nilai <span className="text-red-600">*</span>
                   </label>
                   <input
+                  placeholder="Masukkan nilai antara 1-100"
                     type="number"
                     min={1}
                     max={100}
@@ -730,7 +727,7 @@ const Dashboardjuri: React.FC = () => {
 
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Catatan / Komentar
+                    Catatan / Komentar (<span className="text-gray-500">Opsional</span>)
                   </label>
                   <textarea
                     rows={4}
