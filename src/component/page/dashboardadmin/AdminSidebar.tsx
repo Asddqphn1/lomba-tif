@@ -20,6 +20,8 @@ import PesertaSection from "./PesrtaSection";
 import DaftarJuriaAdmin from "./DaftarJuriaAdmin";
 import { DashboardSection } from "./DasboardSection";
 import ProfileSection from "../profile/ProfileSection";
+import SertifikatSection from "./SertifikatSection";
+import LombaSertifikat from "./LombaSertifikat";
 
 function AdminSidebar() {
   const [open, setOpen] = useState(true);
@@ -74,6 +76,8 @@ function AdminSidebar() {
         return <DashboardSection/>
       case "profile":
         return <ProfileSection/>
+      case "sertifikat":
+        return <LombaSertifikat/>
       default:
         return <DashboardSection/>
     }
@@ -157,6 +161,18 @@ function AdminSidebar() {
                       >
                         <icons.User className="text-white" />
                         <span className="text-white font-bold">Users</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <SidebarMenuItem key="sertifikat">
+                      <SidebarMenuButton
+                        className="hover:bg-[#2E4EC5]"
+                        onClick={() => setOpenSide("sertifikat")}
+                      >
+                        <icons.FolderClosed className="text-white" />
+                        <span className="text-white font-bold">Sertifikat</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </motion.div>
