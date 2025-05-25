@@ -56,6 +56,8 @@ interface juriId {
   id: string;
 }
 
+
+
 const Dashboardjuri: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [selectedSubmission, setSelectedSubmission] = useState<string | null>(
@@ -68,6 +70,8 @@ const Dashboardjuri: React.FC = () => {
   const [nilai, setNilai] = useState<number>();
   const [deskripsi, setDeskripsi] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [jumlahBelumDinilai, setJumlahBelumDinilai] = useState(0);
+  const [jumlahSudahDinilai, setJumlahSudahDinilai] = useState(0);
 
 
 
@@ -124,6 +128,8 @@ const Dashboardjuri: React.FC = () => {
     }
   }, [idUser]);
 
+
+
   useEffect(() => {
     // Fetch submissions after juriId is loaded
     if (juriId) {
@@ -144,6 +150,28 @@ const Dashboardjuri: React.FC = () => {
       fetchSubmissions();
     }
   }, [juriId]);
+
+  useEffect(() => {
+    if (submission.length === 0) return;
+    const belum = submission.filter(p =>
+      !Array.isArray(p.penilaian) ||
+      p.penilaian.length === 0 ||
+      Number(p.penilaian[0]?.nilai_penilaian) <= 0
+    ).length;
+
+    const sudah = submission.filter(p =>
+      Array.isArray(p.penilaian) &&
+      p.penilaian.length > 0 &&
+      Number(p.penilaian[0]?.nilai_penilaian) > 0
+    ).length;
+
+    setJumlahBelumDinilai(belum);
+    setJumlahSudahDinilai(sudah);
+
+    console.log("belum:", belum, "sudah:", sudah);
+  }, [submission]);
+
+
 
   const handleFetchSubmission = async () => {
     if (!selectedSubmission) return;
@@ -248,7 +276,44 @@ const Dashboardjuri: React.FC = () => {
 
 
   React.useEffect(() => {
+
     if (activeTab === "dashboard") {
+
+      const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+      // Fungsi mapping tanggal ke nama hari bahasa Indonesia
+      function getDayName(dateString: string): string {
+        const date = new Date(dateString);
+        const dayIndex = date.getDay(); // 0 = Minggu, 1 = Senin, ...
+        // mapping dari getDay ke indeks hari dalam array days
+        const mapping = [6, 0, 1, 2, 3, 4, 5];
+        return days[mapping[dayIndex]];
+      }
+
+      // Fungsi hitung jumlah submission per hari
+      function countSubmissionPerDay(submissions: Submission[]): number[] {
+        const counts: Record<string, number> = {
+          Senin: 0,
+          Selasa: 0,
+          Rabu: 0,
+          Kamis: 0,
+          Jumat: 0,
+          Sabtu: 0,
+          Minggu: 0,
+        };
+
+        submissions.forEach((sub) => {
+          const day = getDayName(sub.submission_time);
+          if (counts[day] !== undefined) counts[day]++;
+        });
+
+        // Hasil array sesuai urutan days
+        return days.map((day) => counts[day]);
+      }
+
+      // Misal variable submission sudah ada (array Submission)
+      const dataPerHari = countSubmissionPerDay(submission);
+
       const chartDom = document.getElementById("submissionChart");
       if (chartDom) {
         const myChart = echarts.init(chartDom);
@@ -256,9 +321,7 @@ const Dashboardjuri: React.FC = () => {
           animation: false,
           tooltip: {
             trigger: "axis",
-            axisPointer: {
-              type: "shadow",
-            },
+            axisPointer: "none",
           },
           grid: {
             left: "3%",
@@ -269,34 +332,18 @@ const Dashboardjuri: React.FC = () => {
           xAxis: [
             {
               type: "category",
-              data: [
-                "Senin",
-                "Selasa",
-                "Rabu",
-                "Kamis",
-                "Jumat",
-                "Sabtu",
-                "Minggu",
-              ],
-              axisTick: {
-                alignWithLabel: true,
-              },
+              data: days,
+              axisTick: { alignWithLabel: true },
             },
           ],
-          yAxis: [
-            {
-              type: "value",
-            },
-          ],
+          yAxis: [{ type: "value" }],
           series: [
             {
               name: "Submission",
               type: "bar",
               barWidth: "60%",
-              data: [1, 2, 0, 1, 0, 0, 0],
-              itemStyle: {
-                color: "#4F46E5",
-              },
+              data: dataPerHari,
+              itemStyle: { color: "#4F46E5" },
             },
           ],
         };
@@ -338,12 +385,12 @@ const Dashboardjuri: React.FC = () => {
               },
               data: [
                 {
-                  value: 4,
+                  value: Number(jumlahBelumDinilai),
                   name: "Belum Dinilai",
                   itemStyle: { color: "#EF4444" },
                 },
                 {
-                  value: 0,
+                  value: Number(jumlahSudahDinilai),
                   name: "Sudah Dinilai",
                   itemStyle: { color: "#10B981" },
                 },
@@ -354,7 +401,7 @@ const Dashboardjuri: React.FC = () => {
         distributionChart.setOption(option);
       }
     }
-  }, [activeTab]);
+  }, [jumlahBelumDinilai, jumlahSudahDinilai, activeTab]);
 
   const renderDashboard = () => (
     <div className="p-6">
@@ -376,24 +423,24 @@ const Dashboardjuri: React.FC = () => {
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-red-100 mr-4">
-              <i className="fas fa-clock text-red-600 text-xl"></i>
+            <div className="p-3 rounded-full bg-green-100 mr-4">
+              <i className="fas fa-clock text-green-600 text-xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Penilaian Pending</p>
-              <p className="text-2xl font-bold">{ }</p>
+              <p className="text-sm text-gray-500">Sudah Dinilai</p>
+              <p className="text-2xl font-bold">{jumlahSudahDinilai}</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 mr-4">
-              <i className="fas fa-users text-green-600 text-xl"></i>
+            <div className="p-3 rounded-full bg-red-100 mr-4">
+              <i className="fas fa-users text-red-600 text-xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Peserta</p>
-              <p className="text-2xl font-bold">4</p>
+              <p className="text-sm text-gray-500">Belum Dinilai</p>
+              <p className="text-2xl font-bold">{jumlahBelumDinilai}</p>
             </div>
           </div>
         </div>
@@ -436,44 +483,41 @@ const Dashboardjuri: React.FC = () => {
                   Tanggal
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Aksi
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {submission.slice(0, 3).map((submission) => (
-                <tr key={submission.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {submission.pesertalomba.peserta.nama}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {submission.pesertalomba.lomba.nama}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(submission.submission_time).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                      {submission.penilaian.status_penilaian}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
-                      onClick={() => {
-                        setActiveTab("penilaian");
-                        setSelectedSubmission(null);
-                      }}
-                    >
-                      <i className="fas fa-star mr-1"></i> Nilai
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {submission
+                .slice()
+                .sort((a, b) => new Date(b.submission_time).getTime() - new Date(a.submission_time).getTime())
+                .slice(0, 3)
+                .map((submission) => (
+                  <tr key={submission.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.pesertalomba.peserta.nama}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.pesertalomba.lomba.nama}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {new Date(submission.submission_time).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
+                        onClick={() => {
+                          setActiveTab("penilaian");
+                          setSelectedSubmission(null);
+                        }}
+                      >
+                        <i className="fas fa-star mr-1"></i> Nilai
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
+
           </table>
         </div>
       </div>
@@ -526,9 +570,6 @@ const Dashboardjuri: React.FC = () => {
                   Tanggal
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Aksi
                 </th>
               </tr>
@@ -546,11 +587,6 @@ const Dashboardjuri: React.FC = () => {
                     {FormatTanggal(submission.submission_time, true)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                      {submission.penilaian.status_penilaian}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
                       onClick={() => {
@@ -560,9 +596,6 @@ const Dashboardjuri: React.FC = () => {
                       }}
                     >
                       <i className="fas fa-star mr-1"></i> Nilai
-                    </button>
-                    <button className="text-gray-600 hover:text-gray-900 cursor-pointer !rounded-button whitespace-nowrap">
-                      <i className="fas fa-eye mr-1"></i> Detail
                     </button>
                   </td>
                 </tr>
@@ -715,7 +748,7 @@ const Dashboardjuri: React.FC = () => {
                     Nilai <span className="text-red-600">*</span>
                   </label>
                   <input
-                  placeholder="Masukkan nilai antara 1-100"
+                    placeholder="Masukkan nilai antara 1-100"
                     type="number"
                     min={1}
                     max={100}
@@ -751,8 +784,8 @@ const Dashboardjuri: React.FC = () => {
                     type="submit"
                     disabled={loading}
                     className={`px-4 py-2 rounded-lg text-white ${loading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"
                       }`}
                   >
                     {loading ? "Menyimpan..." : "Simpan Penilaian"}
