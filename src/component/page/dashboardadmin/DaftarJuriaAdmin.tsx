@@ -13,26 +13,137 @@ import { useNavigate } from "react-router-dom";
 import LombaSection from "./LombaSection";
 import { Pencil, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
+import EditJuriModal from "./EditJuriModal";
 
-
-
-const DaftarJuriaAdmin : React.FC = () => {
-  interface peserta {
+const DaftarJuriaAdmin: React.FC = () => {
+  interface Juri {
+    id: string;
     nama: string;
     lomba: {
-        nama: string;
-        tanggal: string;
-    }
+      id: string;
+      nama: string;
+      tanggal: string;
+    };
     users: {
-        email: string;
-    }
-    nama_lomba: string;
-    id: string;
+      email: string;
+    };
     created_at: string;
   }
+
+  interface Lomba {
+    id: string;
+    nama: string;
+  }
+
   const [open, setOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedJuri, setSelectedJuri] = useState<Juri | null>(null);
+  const [lombaList, setLombaList] = useState<Lomba[]>([]);
   const navigasi = useNavigate();
-  const [dataJuri, setDataJuri] = useState<peserta[]>([]);
+  const [dataJuri, setDataJuri] = useState<Juri[]>([]);
+
+  
+  // Fungsi untuk handle update juri
+  const handleUpdateJuri = async (
+    id: string,
+    updateData: { nama: string; lomba_id: string }
+  ) => {
+    try {
+      const response = await fetch(`http://localhost:3000/juri/juri/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(updateData),
+      });
+
+      if (response.status === 401) {
+        navigasi("/login", { replace: true });
+        return false;
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update data juri di state
+        setDataJuri((prevData) =>
+          prevData.map((juri) =>
+            juri.id === id
+              ? {
+                  ...juri,
+                  nama: updateData.nama,
+                  lomba: { ...juri.lomba, id: updateData.lomba_id },
+                }
+              : juri
+          )
+        );
+
+        Swal.fire("Berhasil!", "Data juri berhasil diperbarui.", "success");
+        return true;
+      } else {
+        Swal.fire(
+          "Gagal!",
+          data.message || "Gagal memperbarui data juri.",
+          "error"
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error("Error updating juri:", error);
+      Swal.fire(
+        "Gagal!",
+        "Terjadi kesalahan saat memperbarui data juri.",
+        "error"
+      );
+      return false;
+    }
+  };
+
+  // Fungsi untuk membuka modal edit
+  const openEditModal = (juri: Juri) => {
+    setSelectedJuri(juri);
+    setEditModalOpen(true);
+  };
+
+  // Load data juri dan lomba saat komponen mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [juriResponse, lombaResponse] = await Promise.all([
+          fetch("http://localhost:3000/juri", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }),
+          fetch("http://localhost:3000/daftarlomba", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }),
+        ]);
+
+        if (juriResponse.status === 401 || lombaResponse.status === 401) {
+          navigasi("/login", { replace: true });
+          return;
+        }
+
+        const juriData = await juriResponse.json();
+        const lombaData = await lombaResponse.json();
+
+        setDataJuri(juriData.data);
+        setLombaList(lombaData.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   const handleDelete = (id: string, nama: string) => {
     Swal.fire({
       title: "Apakah Anda yakin?",
@@ -83,6 +194,7 @@ const DaftarJuriaAdmin : React.FC = () => {
       }
     });
   };
+
   useEffect(() => {
     fetch("http://localhost:3000/juri", {
       method: "GET",
@@ -101,7 +213,6 @@ const DaftarJuriaAdmin : React.FC = () => {
       .then((data) => {
         console.log(data.data);
         setDataJuri(data.data);
-
       })
       .catch((error) => console.error(error));
   }, []);
@@ -113,19 +224,14 @@ const DaftarJuriaAdmin : React.FC = () => {
       </div>
       <h2 className="text-xl font-semibold mb-6">Daftar Juri</h2>
 
-      <div className="mb-6">
-        <div className="flex gap-4 mb-4">
-          <Button variant="outline">Semua Kategori</Button>
-          <Button variant="outline">Semua Status</Button>
-        </div>
-      </div>
+      <div className="mb-6"></div>
 
       <div className="w-[92vw]">
         <Table className="border table-fixed overflow-auto">
           <TableHeader>
             <TableRow>
               <TableHead className="w-1/3">JURI</TableHead>
-                <TableHead className="w-1/3">EMAIL</TableHead>
+              <TableHead className="w-1/3">EMAIL</TableHead>
               <TableHead className="w-1/4">CABANG LOMBA</TableHead>
               <TableHead className="w-1/6">TANGGAL LOMBA</TableHead>
               <TableHead className="w-1/6">AKSI</TableHead>
@@ -137,16 +243,22 @@ const DaftarJuriaAdmin : React.FC = () => {
                 <TableCell className="font-bold">{juri.nama}</TableCell>
                 <TableCell className="font-bold">{juri.users?.email}</TableCell>
                 <TableCell className="font-bold">{juri.lomba?.nama}</TableCell>
-                <TableCell className="font-bold">{FormatTanggal(juri.lomba?.tanggal)}</TableCell>
+                <TableCell className="font-bold">
+                  {FormatTanggal(juri.lomba?.tanggal)}
+                </TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => {}} // Open the modal for this user
+                    onClick={() => openEditModal(juri)}
                   >
                     <Pencil />
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(juri.id, juri.nama)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(juri.id, juri.nama)}
+                  >
                     <Trash2 />
                   </Button>
                 </TableCell>
@@ -154,10 +266,24 @@ const DaftarJuriaAdmin : React.FC = () => {
             ))}
           </TableBody>
         </Table>
+
+        {selectedJuri && (
+          <EditJuriModal
+            open={editModalOpen}
+            onClose={() => setEditModalOpen(false)}
+            juri={{
+              id: selectedJuri.id,
+              nama: selectedJuri.nama,
+              lomba_id: selectedJuri.lomba.id,
+            }}
+            lombaOptions={lombaList}
+            onSave={handleUpdateJuri}
+          />
+        )}
         <LombaSection open={open} onClose={() => setOpen(false)} />
       </div>
     </div>
   );
-}
+};
 
 export default DaftarJuriaAdmin;

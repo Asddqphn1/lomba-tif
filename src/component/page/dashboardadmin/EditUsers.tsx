@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import ShadCN UI Alert components
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-
-interface props {
+interface Props {
   id: string;
   username: string;
   email: string;
@@ -13,18 +19,64 @@ interface props {
   onClose: () => void;
 }
 
-const EditUsers: React.FC<props> = ({ id, username, email, open, onClose }) => {
-  const [fullName, setFullName] = useState("");
-  const [competitionId, setCompetitionId] = useState("");
+interface LombaOption {
+  id: string;
+  nama: string;
+}
+
+const EditUsers: React.FC<Props> = ({
+  id,
+  username,
+  email,
+  open,
+  onClose,
+}) => {
+  const [namaJuri, setNamaJuri] = useState(username);
+  const [lombaId, setLombaId] = useState("");
+  const [lombaOptions, setLombaOptions] = useState<LombaOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<{
     type: "success" | "error" | null;
     message: string;
-  }>({
-    type: null,
-    message: "",
-  });
+  }>({ type: null, message: "" });
 
-  const handleClick = async (id: string) => {
+  // Fetch daftar lomba saat komponen terbuka
+  useEffect(() => {
+    if (open) {
+      fetchLombaOptions();
+    }
+  }, [open]);
+
+  const fetchLombaOptions = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/daftarlomba", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal memuat daftar lomba");
+      }
+
+      const data = await response.json();
+      setLombaOptions(data.data);
+    } catch (error) {
+      console.error("Error fetching lomba options:", error);
+      setAlert({
+        type: "error",
+        message: "Gagal memuat daftar lomba. Silakan coba lagi.",
+      });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setAlert({ type: null, message: "" });
+
     try {
       const response = await fetch(`http://localhost:3000/juri/${id}`, {
         method: "PATCH",
@@ -33,35 +85,36 @@ const EditUsers: React.FC<props> = ({ id, username, email, open, onClose }) => {
         },
         credentials: "include",
         body: JSON.stringify({
-          namaJuri: fullName,
-          id_lomba: competitionId,
+          namaJuri: namaJuri,
+          id_lomba: lombaId,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // Jika response tidak OK, gunakan pesan error dari backend
-        throw new Error(data.message || "Failed to update user details");
+        throw new Error(data.message || "Gagal memperbarui data juri");
       }
 
       setAlert({
         type: "success",
-        message: data.message || "Data juri berhasil diperbarui!",
+        message: "Data juri berhasil diperbarui!",
       });
+
+      // Panggil callback onSuccess setelah 2 detik
+      setTimeout(() => {
+        onClose();
+      }, 2000);
     } catch (error) {
       setAlert({
         type: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Terjadi kesalahan, silakan coba lagi",
+        message: error instanceof Error ? error.message : "Terjadi kesalahan",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  
-  
   if (!open) return null;
 
   return (
@@ -84,56 +137,68 @@ const EditUsers: React.FC<props> = ({ id, username, email, open, onClose }) => {
             ❌
           </button>
 
+          <h2 className="text-xl font-semibold mb-4">Ubah User menjadi Juri</h2>
+
           {/* User Info */}
-          <div className="flex items-center mb-4">
-            <div className="ml-4">
-              <h2 className="text-xl font-semibold">{username}</h2>
-              <p className="text-gray-500">{email}</p>
-            </div>
+          <div className="mb-4">
+            <p className="font-medium">Email: {email}</p>
           </div>
 
-          {/* Alert Message (Success/Error) */}
+          {/* Alert Message */}
           {alert.type && (
             <Alert
               variant={alert.type === "success" ? "default" : "destructive"}
+              className="mb-4"
             >
               <AlertTitle>
-                {alert.type === "success" ? "Success" : "Error"}
+                {alert.type === "success" ? "Sukses" : "Error"}
               </AlertTitle>
               <AlertDescription>{alert.message}</AlertDescription>
             </Alert>
           )}
 
-          {/* Form Fields */}
-          <div>
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full mb-4"
-            />
-          </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <Label htmlFor="namaJuri">Nama Juri</Label>
+              <Input
+                id="namaJuri"
+                value={namaJuri}
+                onChange={(e) => setNamaJuri(e.target.value)}
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="competitionId">Competition ID</Label>
-            <Input
-              id="competitionId"
-              value={competitionId}
-              onChange={(e) => setCompetitionId(e.target.value)}
-              className="w-full mb-4"
-            />
-          </div>
+            <div className="mb-6">
+              <Label htmlFor="lomba">Lomba yang Dinilai</Label>
+              <Select value={lombaId} onValueChange={setLombaId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Lomba" />
+                </SelectTrigger>
+                <SelectContent>
+                  {lombaOptions.map((lomba) => (
+                    <SelectItem key={lomba.id} value={lomba.id}>
+                      {lomba.nama}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <Button
-              onClick={() => handleClick(id)}
-              className="bg-blue-600 text-white"
-            >
-              Save Changes
-            </Button>
-          </div>
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+              >
+                Batal
+              </Button>
+              <Button type="submit" disabled={isLoading || !lombaId}>
+                {isLoading ? "Menyimpan..." : "Simpan Perubahan"}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </>

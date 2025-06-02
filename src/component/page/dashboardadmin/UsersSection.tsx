@@ -113,13 +113,6 @@ const UsersSection: React.FC = () => {
       </div>
       <h2 className="text-xl font-semibold mb-6">Daftar Users</h2>
 
-      <div className="mb-6">
-        <div className="flex gap-4 mb-4">
-          <Button variant="outline">Semua Kategori</Button>
-          <Button variant="outline">Semua Status</Button>
-        </div>
-      </div>
-
       <div className="w-[92vw]">
         <Table className="border table-fixed overflow-auto">
           <TableHeader>
@@ -161,8 +154,7 @@ const UsersSection: React.FC = () => {
                       username={participant.nama}
                       email={participant.email}
                       open={true}
-                      onClose={handleCloseModal}
-                    />
+                      onClose={handleCloseModal}                    />
                   )}
                 </TableCell>
               </TableRow>

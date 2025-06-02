@@ -31,12 +31,15 @@ export function FormatTanggal(
     return "Tanggal tidak valid";
   }
 
-  // Komponen tanggal
-  const hari = date.getDate();
-  const bulanIndex = date.getMonth();
-  const tahun = date.getFullYear();
-  const jam = date.getHours().toString().padStart(2, "0");
-  const menit = date.getMinutes().toString().padStart(2, "0");
+  // Komponen tanggal dengan penyesuaian timezone WIB (UTC+7)
+  const offsetWIB = 7 * 60 * 60 * 1000; // Offset WIB dalam milidetik
+  const dateWIB = new Date(date.getTime() + offsetWIB);
+
+  const hari = dateWIB.getUTCDate();
+  const bulanIndex = dateWIB.getUTCMonth();
+  const tahun = dateWIB.getUTCFullYear();
+  const jam = dateWIB.getUTCHours().toString().padStart(2, "0");
+  const menit = dateWIB.getUTCMinutes().toString().padStart(2, "0");
 
   // Format dasar
   let formattedDate = `${hari} ${bulan[bulanIndex]} ${tahun}`;
