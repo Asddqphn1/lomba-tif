@@ -11,36 +11,62 @@ import { useEffect, useState } from "react";
 import { FormatTanggal } from "@/helper/FormatTanggal";
 import { useNavigate } from "react-router-dom";
 import LombaSection from "./LombaSection";
+import LombaDropdown from "../admin-restricted-page/LombaDropdown"; // Import the new component
 
 const PesertaSection: React.FC = () => {
   interface peserta {
-    id: string; // Pastikan ada id peserta
+    id: string;
     nama: string;
     pesertalomba: [
       {
         lomba?: {
           jenis_lomba: string;
           nama: string;
+          id: string;
         };
       }
     ];
     created_at: string;
-    is_team?: boolean; // Tambahkan field ini jika ada
-    team_members?: string[]; // Tambahkan jika data anggota tim tersedia
+    is_team?: boolean;
+    team_members?: string[];
   }
+
+  interface lomba {
+    id: string;
+    nama: string;
+  }
+
   interface namaAnggota {
     nama: string;
   }
 
   const [open, setOpen] = useState(false);
   const [jenis, setJenis] = useState<string>("");
+  const [lomba, setLomba] = useState<string>("");
   const [selectedTeam, setSelectedTeam] = useState<namaAnggota[]>([]);
   const [showMembers, setShowMembers] = useState(false);
+  const [lombaOptions, setLombaOptions] = useState<lomba[]>([]); // State for lomba options
   const navigasi = useNavigate();
   const [dataPeserta, setDataPeserta] = useState<peserta[]>([]);
 
+  // Fetch lomba options when component mounts
   useEffect(() => {
-    fetch(`http://localhost:3000/daftarpeserta?jenis=${jenis}`, {
+    fetch("http://localhost:3000/daftarlomba", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setLombaOptions(data.data || []);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/daftarpeserta?jenis=${jenis}&lomba=${lomba}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -53,14 +79,11 @@ const PesertaSection: React.FC = () => {
         }
         return response.json();
       })
-
       .then((data) => {
-
         setDataPeserta(data.data);
-
       })
       .catch((error) => console.error(error));
-  }, [jenis]);
+  }, [jenis, lomba, navigasi]);
 
   const handleViewTeam = async (id: string) => {
     try {
@@ -106,9 +129,6 @@ const PesertaSection: React.FC = () => {
     <div className="p-6">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">Admin Lomba</h1>
-        <Button variant="outline" onClick={() => setOpen(true)}>
-          + Tambah Lomba
-        </Button>
       </div>
       <h2 className="text-xl font-semibold mb-6">Daftar Peserta</h2>
 
@@ -123,6 +143,12 @@ const PesertaSection: React.FC = () => {
           <Button variant="outline" onClick={() => setJenis("INDIVIDU")}>
             INDIVIDU
           </Button>
+
+          <LombaDropdown
+            lomba={lomba}
+            setLomba={setLomba}
+            lombaOptions={lombaOptions}
+          />
         </div>
       </div>
 

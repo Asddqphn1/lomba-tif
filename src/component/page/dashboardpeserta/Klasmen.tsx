@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { icons } from "lucide-react";
 import { FormatTanggal } from "@/helper/FormatTanggal";
@@ -19,14 +19,61 @@ interface TeamData {
   };
 }
 
+interface ProcessedTeamData {
+  nama: string;
+  email: string;
+  lomba: string;
+  totalNilai: number;
+  jumlahData: number;
+  rataRata: number;
+}
+
 const Klasmen: React.FC = () => {
   const { idLomba } = useParams();
   const [teams, setTeams] = useState<TeamData[]>([]);
-  const [namaLomba , setNamaLomba] = useState<string>("");
-  const [tanggal , setTanggal] = useState<string>("");
+  const [processedTeams, setProcessedTeams] = useState<ProcessedTeamData[]>([]);
+  const [namaLomba, setNamaLomba] = useState<string>("");
+  const [tanggal, setTanggal] = useState<string>("");
+  const [sertifikat, setSertifikat] = useState<string | null>(null);
   const [animatedPoints, setAnimatedPoints] = useState<{
     [key: number]: number;
   }>({});
+
+  const processTeamsData = (data: TeamData[]) => {
+    const groupedData: Record<string, ProcessedTeamData> = {};
+
+    data.forEach((item) => {
+      const nilai =
+        typeof item.nilai === "string" ? parseFloat(item.nilai) : item.nilai;
+      const key = item.peserta.nama;
+
+      if (!groupedData[key]) {
+        groupedData[key] = {
+          nama: item.peserta.nama,
+          email: item.peserta.email,
+          lomba: item.lomba.nama,
+          totalNilai: nilai,
+          jumlahData: 1,
+          rataRata: nilai,
+        };
+      } else {
+        groupedData[key].totalNilai += nilai;
+        groupedData[key].jumlahData += 1;
+        groupedData[key].rataRata =
+          groupedData[key].totalNilai / groupedData[key].jumlahData;
+      }
+    });
+
+    // Bulatkan nilai rata-rata sebelum disort
+    const sortedData = Object.values(groupedData)
+      .map((team) => ({
+        ...team,
+        rataRata: Math.round(team.rataRata), // Pembulatan di sini
+      }))
+      .sort((a, b) => b.rataRata - a.rataRata);
+
+    setProcessedTeams(sortedData);
+  };
 
   useEffect(() => {
     fetch(`http://localhost:3000/penilaian/daftarnilai/${idLomba}`, {
@@ -38,7 +85,7 @@ const Klasmen: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         setTeams(data.data);
-        console.log(data.data);
+        processTeamsData(data.data);
       });
   }, [idLomba]);
 
@@ -57,13 +104,13 @@ const Klasmen: React.FC = () => {
   }, [idLomba]);
 
   useEffect(() => {
-    if (teams.length > 0) {
+    if (processedTeams.length > 0) {
       const animationDuration = 2;
       const steps = 60;
       const incrementTimes = (animationDuration * 1000) / steps;
 
-      const timers = teams.slice(0, 3).map((team, index) => {
-        const targetPoints = team.nilai;
+      const timers = processedTeams.slice(0, 3).map((team, index) => {
+        const targetPoints = team.rataRata; // Sudah dibulatkan di processTeamsData
         const increment = targetPoints / steps;
         let current = 0;
 
@@ -76,7 +123,7 @@ const Klasmen: React.FC = () => {
 
           setAnimatedPoints((prev) => ({
             ...prev,
-            [index + 1]: Math.floor(current),
+            [index + 1]: Math.round(current), // Gunakan round juga di animasi
           }));
         }, steps);
 
@@ -85,7 +132,7 @@ const Klasmen: React.FC = () => {
 
       return () => timers.forEach((timer) => clearInterval(timer));
     }
-  }, [teams]);
+  }, [processedTeams]);
 
   // Animation variants
   const containerVariants = {
@@ -136,6 +183,20 @@ const Klasmen: React.FC = () => {
     },
   };
 
+  useEffect(() => {
+    fetch(`http://localhost:3000/sertifikat/${idLomba}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      setSertifikat(data.data.url);
+      
+    })
+  }, [idLomba]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-black text-white">
       {/* Header */}
@@ -148,13 +209,31 @@ const Klasmen: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-blue-300">{FormatTanggal(tanggal, false)}</span>
-          <Button
-            variant="outline"
-            className="!rounded-button whitespace-nowrap bg-blue-900 border-blue-700 text-white hover:bg-blue-800"
-          >
-            <i className="fas fa-share-alt mr-2"></i>
-            Bagikan
-          </Button>
+          {sertifikat ? (
+            <Button
+              variant="outline"
+              className="!rounded-button whitespace-nowrap bg-blue-900 border-blue-700 text-white hover:bg-blue-800"
+            >
+              <icons.Scroll />
+              <Link
+                to={sertifikat}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-2"
+              >
+                Sertifikat
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="!rounded-button whitespace-nowrap bg-red-900 border-red-700 text-white hover:bg-red-800 cursor-not-allowed"
+              disabled
+            >
+              <icons.Ban className="text-red-300" />
+              <span className="ml-2">Sertifikat Belum Tersedia</span>
+            </Button>
+          )}
         </div>
       </header>
 
@@ -194,10 +273,12 @@ const Klasmen: React.FC = () => {
                       Peringkat 2
                     </div>
                     <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">
-                      {teams[1]?.peserta.nama || "Loading..."}
+                      {processedTeams[1]?.nama || "-"}
                     </h3>
                     <div className="text-3xl md:text-4xl font-bold text-gray-700">
-                      {animatedPoints[2] || 0}
+                      {isNaN(animatedPoints[2])
+                        ? 0
+                        : Math.round(processedTeams[1]?.rataRata)}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">poin</div>
                   </div>
@@ -221,10 +302,12 @@ const Klasmen: React.FC = () => {
                       Peringkat 1
                     </div>
                     <h3 className="text-2xl md:text-3xl font-bold mb-2 text-white">
-                      {teams[0]?.peserta.nama || "Loading..."}
+                      {processedTeams[0]?.nama || "-"}
                     </h3>
                     <div className="text-4xl md:text-5xl font-bold text-yellow-200">
-                      {animatedPoints[1] || 0}
+                      {isNaN(animatedPoints[1])
+                        ? 0
+                        : Math.round(processedTeams[0]?.rataRata)}
                     </div>
                     <div className="text-sm text-yellow-400 mt-1">poin</div>
                   </div>
@@ -248,10 +331,12 @@ const Klasmen: React.FC = () => {
                       Peringkat 3
                     </div>
                     <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">
-                      {teams[2]?.peserta.nama || "Loading..."}
+                      {processedTeams[2]?.nama || "-"}
                     </h3>
                     <div className="text-3xl md:text-4xl font-bold text-amber-300">
-                      {animatedPoints[3] || 0}
+                      {isNaN(animatedPoints[3])
+                        ? 0
+                        : Math.round(processedTeams[2]?.rataRata)}
                     </div>
                     <div className="text-sm text-amber-500 mt-1">poin</div>
                   </div>
@@ -284,7 +369,7 @@ const Klasmen: React.FC = () => {
                   },
                 }}
               >
-                {teams.map((team, index) => (
+                {processedTeams.map((team, index) => (
                   <motion.div
                     key={index}
                     variants={{
@@ -321,13 +406,19 @@ const Klasmen: React.FC = () => {
                         )}
                       </div>
                       <div className="flex justify-between w-full">
-                        <h3 className="font-bold text-lg">{team.peserta.nama}</h3>
-                      <div className="flex-shrink-0 text-right mr-5">
-                        <div className="text-2xl font-bold">{team.nilai}</div>
-                        <div className="text-xs opacity-80">poin</div>
-                      </div>
-
-
+                        <h3 className="font-bold text-lg">
+                          {team.nama}
+                          <br />
+                          <span className="text-sm text-green-500">
+                            {team.jumlahData} penilaian
+                          </span>
+                        </h3>
+                        <div className="flex-shrink-0 text-right mr-5">
+                          <div className="text-2xl font-bold">
+                            {Math.round(team.rataRata)}
+                          </div>
+                          <div className="text-xs opacity-80">poin</div>
+                        </div>
                       </div>
                     </Card>
                   </motion.div>

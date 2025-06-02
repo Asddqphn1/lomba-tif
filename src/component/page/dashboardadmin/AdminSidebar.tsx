@@ -11,7 +11,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { icons } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion"; // Import motion from Framer Motion
 
 import UsersSection from "./UsersSection";
@@ -20,12 +20,38 @@ import PesertaSection from "./PesrtaSection";
 import DaftarJuriaAdmin from "./DaftarJuriaAdmin";
 import { DashboardSection } from "./DasboardSection";
 import ProfileSection from "../profile/ProfileSection";
-import SertifikatSection from "./SertifikatSection";
 import LombaSertifikat from "./LombaSertifikat";
+
+interface profile {
+  id: string;
+  nama: string;
+  email: string;
+  role: string;
+}
 
 function AdminSidebar() {
   const [open, setOpen] = useState(true);
   const [openSide, setOpenSide] = useState<string>("dashboard");
+  const [profile, setProfile] = useState<profile>();
+
+
+  useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const res = await fetch("http://localhost:3000/auth/me", {
+            credentials: "include",
+          });
+          if (!res.ok) throw new Error("Failed to fetch user");
+          const data = await res.json();
+          setProfile(data.user);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      };
+  
+      fetchUser();
+    }, []);
+
 
   // Animation variants
   const containerVariants = {
@@ -84,7 +110,7 @@ function AdminSidebar() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="flex"
       initial="hidden"
       animate="visible"
@@ -124,7 +150,9 @@ function AdminSidebar() {
                         onClick={() => setOpenSide("daftar-lomba")}
                       >
                         <icons.Trophy className="text-white" />
-                        <span className="text-white font-bold">Daftar Lomba</span>
+                        <span className="text-white font-bold">
+                          Daftar Lomba
+                        </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </motion.div>
@@ -191,13 +219,27 @@ function AdminSidebar() {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+            <motion.div
+              className="p-4 border-t border-blue-600 mt-auto"
+              variants={itemVariants}
+            >
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+                  <icons.User className="text-white" />
+                </div>
+                <div>
+                  <p className="font-medium text-white">{profile?.nama}</p>
+                  <p className="text-sm text-blue-200">{profile?.role}</p>
+                </div>
+              </div>
+            </motion.div>
           </SidebarContent>
         </Sidebar>
         <SidebarTrigger />
       </SidebarProvider>
 
       {/* Bagian konten utama dengan animasi */}
-      <motion.div 
+      <motion.div
         className="flex-1 p-4"
         variants={contentVariants}
         key={openSide} // This ensures animation plays when content changes

@@ -12,6 +12,7 @@ import { FormatTanggal } from "@/helper/FormatTanggal";
 import { useNavigate } from "react-router-dom";
 import LombaSection from "./LombaSection";
 import { Pencil, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 
 
 
@@ -26,12 +27,62 @@ const DaftarJuriaAdmin : React.FC = () => {
         email: string;
     }
     nama_lomba: string;
-    id: number;
+    id: string;
     created_at: string;
   }
   const [open, setOpen] = useState(false);
   const navigasi = useNavigate();
   const [dataJuri, setDataJuri] = useState<peserta[]>([]);
+  const handleDelete = (id: string, nama: string) => {
+    Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: `Anda akan menghapus juri ${nama}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:3000/juri/hapus/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        })
+          .then((response) => {
+            if (response.status === 401) {
+              navigasi("/login", { replace: true });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+            if (data.status === "success") {
+              // Update the state to remove the deleted juri
+              setDataJuri(dataJuri.filter((juri) => juri.id !== id));
+              Swal.fire("Dihapus!", `Juri ${nama} telah dihapus.`, "success");
+            } else {
+              Swal.fire(
+                "Gagal!",
+                "Terjadi kesalahan saat menghapus juri.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            Swal.fire(
+              "Gagal!",
+              "Terjadi kesalahan saat menghapus juri.",
+              "error"
+            );
+          });
+      }
+    });
+  };
   useEffect(() => {
     fetch("http://localhost:3000/juri", {
       method: "GET",
@@ -95,7 +146,7 @@ const DaftarJuriaAdmin : React.FC = () => {
                   >
                     <Pencil />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => handleDelete(juri.id, juri.nama)}>
                     <Trash2 />
                   </Button>
                 </TableCell>

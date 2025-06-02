@@ -133,11 +133,6 @@ const DaftarLombaAdmin: React.FC = () => {
       comp.deskripsi.toLowerCase().includes(searchQuery.toLowerCase()) ||
       comp.jenis_lomba.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleEdit = (id: string) => {
-    console.log("Edit competition with id:", id);
-  };
-
   
   if (loading) {
     return (
@@ -286,18 +281,13 @@ const DaftarLombaAdmin: React.FC = () => {
                   </div>
 
                   <CardFooter className="flex justify-between gap-2 p-0">
-                    <Button
-                      onClick={() => handleEdit(competition.id)}
-                      variant="outline"
-                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                    >
-                      Edit
-                    </Button>
+                    
                     <Button
                       onClick={() => handleDelete(competition.id)}
                       variant="outline"
-                      className="text-red-600 border-red-600 hover:bg-red-50"
+                      className="text-red-600 border-red-600 hover:bg-red-50 w-full"
                     >
+                      <icons.Trash />
                       Hapus
                     </Button>
                   </CardFooter>

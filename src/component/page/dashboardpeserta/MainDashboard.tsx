@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { icons } from "lucide-react";
 import { Bar } from "react-chartjs-2";
-import { Card, CardHeader, CardFooter, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +34,11 @@ interface lomba_user {
   tanggal: string;
   bataswaktu: string;
 }
+interface submit {
+  id: string;
+  file_url: string;
+  submission_time: string;
+}
 
 interface pesertaLomba {
   id_peserta_lomba: string;
@@ -45,6 +56,8 @@ const MainDashboard: React.FC = () => {
   const [iduser, setIduser] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [url, setUrl] = useState<submit[]>([]);
+  const [showAllCompetitions, setShowAllCompetitions] = useState(false); // New state for toggling
 
   useEffect(() => {
     // Fetch user data
@@ -84,12 +97,39 @@ const MainDashboard: React.FC = () => {
         return res.json();
       })
       .then((data) => {
-        setLombauser(data.data.map((item : pesertaLomba) => item.lomba)); // Changed from data.lomba to data.data
+        setLombauser(data.data.map((item: pesertaLomba) => item.lomba)); // Changed from data.lomba to data.data
         console.log("User lomba data:", data.data);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [iduser]);
+
+  useEffect(() => {
+    if (!iduser) return; // Don't fetch if no user ID
+
+    setLoading(true);
+    fetch(`http://localhost:3000/submit/users/${iduser}`, {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch user lomba");
+        return res.json();
+      })
+      .then((data) => {
+        setUrl(data.data);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [iduser]);
+
+  const toggleShowAllCompetitions = () => {
+    setShowAllCompetitions(!showAllCompetitions);
+  };
+
+  // Get the competitions to display - either first 3 or all
+  const displayedCompetitions = showAllCompetitions
+    ? lombaUser
+    : lombaUser.slice(0, 1);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -145,7 +185,9 @@ const MainDashboard: React.FC = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-500">Submission</p>
-                <h3 className="text-2xl font-bold">0/{lombaUser.length}</h3>
+                <h3 className="text-2xl font-bold">
+                  {url.length}/{lombaUser.length}
+                </h3>
               </div>
             </div>
           </div>
@@ -170,7 +212,7 @@ const MainDashboard: React.FC = () => {
             </CardHeader>
             <div className="px-6 py-4">
               <div className="space-y-4">
-                {lombaUser.map((item) => (
+                {displayedCompetitions.map((item) => (
                   <div key={item.id} className="border-b pb-4">
                     <h3 className="text-xl font-semibold text-gray-800">
                       {item.nama}
@@ -188,11 +230,20 @@ const MainDashboard: React.FC = () => {
                     </p>
                   </div>
                 ))}
+                {lombaUser.length > 3 && (
+                  <p className="text-sm text-gray-500">
+                    Showing {displayedCompetitions.length} of {lombaUser.length}{" "}
+                    competitions
+                  </p>
+                )}
               </div>
             </div>
             <CardFooter>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-                View All
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                onClick={toggleShowAllCompetitions}
+              >
+                {showAllCompetitions ? "Show Less" : "View All"}
               </button>
             </CardFooter>
           </Card>

@@ -42,7 +42,7 @@ const UsersSection: React.FC = () => {
       })
       .then((data) => {
         console.log(data.data);
-        setDataPeserta(data.data);
+        setDataPeserta(data.data.filter((user: Peserta) => user.role === "USERS"));
       })
       .catch((error) => {
         console.error(error);
@@ -58,34 +58,51 @@ const UsersSection: React.FC = () => {
   };
 
   const handleDeleteUser = async (id: string) => {
-    try {
-      const response = await fetch(`http://localhost:3000/users/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
+    // Tampilkan konfirmasi sebelum menghapus
+    const confirmation = await Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "User yang dihapus tidak dapat dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    });
 
-      if (response.ok) {
-        // Update state: Hapus user dari dataPeserta
-        setDataPeserta((prevData) => prevData.filter((user) => user.id !== id));
-
-        // Tampilkan notifikasi
-        Swal.fire({
-          title: "Hapus User",
-          text: "User Berhasil dihapus",
-          icon: "success",
-          confirmButtonText: "OK",
+    // Jika user menekan "Ya, hapus!"
+    if (confirmation.isConfirmed) {
+      try {
+        const response = await fetch(`http://localhost:3000/users/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         });
-      } else {
-        throw new Error("Gagal menghapus user");
+
+        if (response.ok) {
+          // Update state: Hapus user dari dataPeserta
+          setDataPeserta((prevData) =>
+            prevData.filter((user) => user.id !== id)
+          );
+
+          // Tampilkan notifikasi sukses
+          Swal.fire({
+            title: "Terhapus!",
+            text: "User berhasil dihapus.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        } else {
+          throw new Error("Gagal menghapus user");
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: "Error!",
+          text: "Gagal menghapus user",
+          icon: "error",
+        });
       }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        title: "Error",
-        text: "Gagal menghapus user",
-        icon: "error",
-      });
     }
   };
 

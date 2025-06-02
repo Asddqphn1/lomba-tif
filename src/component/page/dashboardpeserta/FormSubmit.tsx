@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,9 @@ const FormSubmit: React.FC = () => {
   const { idpeserta } = useParams<string>();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [submissionData, setSubmissionData] = useState<any>(null);
+  const [isChecking, setIsChecking] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("file");
@@ -43,8 +46,9 @@ const FormSubmit: React.FC = () => {
       const file = e.target.files[0];
 
       // Validate file size (100KB max)
-      if (file.size > 1000000 * 1024) {
-        setErrors({ ...errors, file: "Ukuran file maksimum 100KB" });
+      if (file.size > 100 * 1024 * 1024) {
+        // 100MB = 100 × 1024 × 1024 bytes
+        setErrors({ ...errors, file: "Ukuran file maksimum 100MB" });
         return;
       }
 
@@ -77,6 +81,33 @@ const FormSubmit: React.FC = () => {
     }
   };
 
+  // Cek status submission saat komponen mount
+  useEffect(() => {
+    const checkSubmission = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/submit/submission/${idpeserta}`,
+          {
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.data) {
+          setHasSubmitted(true);
+          setSubmissionData(data.data);
+        }
+      } catch (error) {
+        console.error("Error checking submission:", error);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkSubmission();
+  }, [idpeserta]);
+
   const handleUploadToCloudinary = async () => {
     if (!imageFile || !validateForm()) return;
 
@@ -106,8 +137,38 @@ const FormSubmit: React.FC = () => {
       setIsUploading(false);
     }
   };
-  
 
+  const handleDeleteSubmission = async (submissionId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/submit/hapus/${submissionId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "Berhasil!",
+          text: data.message,
+          icon: "success",
+        });
+        // Refresh data atau update state
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error instanceof Error ? error.message : String(error),
+        icon: "error",
+      });
+    }
+  };
+  
   const handleResetFile = () => {
     setImageFile(null);
     setImagePreview(null);
@@ -137,8 +198,7 @@ const FormSubmit: React.FC = () => {
       // Handle success (e.g., show success message, redirect, etc.)
       Swal.fire({
         title: "Sukses",
-        text:
-          "Berhasil Submit semoga berhasil 🔥🔥🔥",
+        text: "Berhasil Submit semoga berhasil 🔥🔥🔥",
         icon: "success",
       });
     } catch (error) {
@@ -151,6 +211,82 @@ const FormSubmit: React.FC = () => {
       });
     }
   };
+
+  if (isChecking) {
+    return (
+      <div className="max-w-2xl mx-auto p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">
+              Memeriksa Status Submission...
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p>Sedang memeriksa apakah Anda sudah melakukan submission...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (hasSubmitted) {
+    return (
+      <div className="max-w-2xl mx-auto p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">
+              Submission Anda
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <Label>Status</Label>
+                <p className="font-medium text-green-600">
+                  Sudah melakukan submission
+                </p>
+              </div>
+
+              <div>
+                <Label>Waktu Submission</Label>
+                <p>
+                  {new Date(submissionData.submission_time).toLocaleString()}
+                </p>
+              </div>
+
+              <div>
+                <Label>File/URL</Label>
+                <p className="break-all">
+                  {submissionData.file_url.startsWith("http") ? (
+                    <a
+                      href={submissionData.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {submissionData.file_url}
+                    </a>
+                  ) : (
+                    submissionData.file_url
+                  )}
+                </p>
+              </div>
+
+              <div>
+                <Label>Lomba</Label>
+                <p>{submissionData.pesertalomba.lomba.nama}</p>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button variant="outline" onClick={() => handleDeleteSubmission(submissionData.id)}>
+              Hapus Submission
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -222,7 +358,7 @@ const FormSubmit: React.FC = () => {
                     Format yang didukung: JPG, PNG, PDF, DOC, DOCX, PPT, PPTX,
                     ZIP, RAR
                   </p>
-                  <p>Ukuran maksimum: 100KB</p>
+                  <p>Ukuran maksimum: 100MB</p>
                 </div>
               </div>
             </TabsContent>

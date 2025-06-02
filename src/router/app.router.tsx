@@ -10,8 +10,18 @@ import Submitform from "@/page/pesertadashboard/submitform/Page";
 import Dashboardjuri from "@/component/page/dashboardjuri/DashboardJuri";
 import Klasmen from "@/component/page/dashboardpeserta/Klasmen";
 import Sertifikat from "@/page/sertifikat/idlomba/page";
+import BerandaSection from "@/component/page/beranda/BerandaSection";
+import NilaiLomba from "@/component/page/dashboardpeserta/NilaiLomba";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <BerandaSection />,
+  },
+  {
+    path: "/penilaian/:idUser",
+    element: <NilaiLomba/>,
+  },
   {
     path: "/admindashboard",
     element: <AdminDashboard />,

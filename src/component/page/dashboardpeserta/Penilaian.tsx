@@ -14,6 +14,7 @@ interface PenilaianProps {
       tanggal: string;
     };
     submission: {
+      id: string;
       penilaian: Array<{
         nilai_penilaian: number;
         deskripsi_penilaian: string;
@@ -78,15 +79,6 @@ function Penilaian() {
     }
   }, [idUser]);
 
-  const openModal = (deskripsi: string | null) => {
-    setSelectedDeskripsi(deskripsi);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-
   if (loading) return <div className="text-center py-8">Loading...</div>;
   if (error)
     return <div className="text-red-500 text-center py-8">Error: {error}</div>;
@@ -131,23 +123,24 @@ function Penilaian() {
                       : "text-red-600"
                   }`}
                 >
-                  Poin:{" "}
-                  {lomba.submission?.penilaian?.[0]?.nilai_penilaian ||
-                    "BELUM DINILAI"}
+                  Status:{" "}
+                  {lomba.submission?.penilaian?.[0]
+                    ? "SUDAH DINILAI"
+                    : "BELUM DINILAI"}
                 </p>
               </div>
 
               <div className="flex gap-2 mt-4">
                 <button
-                  onClick={() =>
-                    openModal(
-                      lomba.submission?.penilaian?.[0]?.deskripsi_penilaian ||
-                        null
-                    )
-                  }
-                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  onClick={() => navigate(`/penilaian/${lomba.submission?.id}`)}
+                  disabled={!lomba.submission?.penilaian?.[0]}
+                  className={`flex-1 px-4 py-2 ${
+                    !lomba.submission?.penilaian?.[0]
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  }`}
                 >
-                  Deskripsi Penilaian
+                  Lihat Penilaian
                 </button>
                 <button
                   onClick={() => handleLihatKlasmen(lomba.lomba.id)}
@@ -169,34 +162,6 @@ function Penilaian() {
           ))
         )}
       </div>
-
-      {/* Modal untuk menampilkan deskripsi penilaian */}
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full relative">
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            >
-              <X size={24} />
-            </button>
-            <h3 className="text-xl font-bold mb-4">Deskripsi Penilaian</h3>
-            <div className="bg-gray-50 p-4 rounded">
-              <p className="text-gray-700">
-                {selectedDeskripsi || "TIDAK ADA KOMENTAR"}
-              </p>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
-              >
-                Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="bg-gray-50 p-6 rounded-lg">
         <h2 className="text-xl font-semibold mb-4">Statistik Penilaian</h2>
