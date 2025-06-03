@@ -61,7 +61,7 @@ const MainDashboard: React.FC = () => {
 
   useEffect(() => {
     // Fetch user data
-    fetch("http://localhost:3000/auth/me", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/auth/me", {
       credentials: "include",
     })
       .then((res) => {
@@ -74,7 +74,7 @@ const MainDashboard: React.FC = () => {
 
   useEffect(() => {
     // Fetch all lomba
-    fetch("http://localhost:3000/daftarlomba", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/daftarlomba", {
       credentials: "include",
     })
       .then((res) => {
@@ -89,7 +89,7 @@ const MainDashboard: React.FC = () => {
     if (!iduser) return; // Don't fetch if no user ID
 
     setLoading(true);
-    fetch(`http://localhost:3000/daftarlomba/userlomba/${iduser}`, {
+    fetch(`https://hono-api-lomba-tif-production.up.railway.app/daftarlomba/userlomba/${iduser}`, {
       credentials: "include",
     })
       .then((res) => {
@@ -108,7 +108,7 @@ const MainDashboard: React.FC = () => {
     if (!iduser) return; // Don't fetch if no user ID
 
     setLoading(true);
-    fetch(`http://localhost:3000/submit/users/${iduser}`, {
+    fetch(`https://hono-api-lomba-tif-production.up.railway.app/submit/users/${iduser}`, {
       credentials: "include",
     })
       .then((res) => {

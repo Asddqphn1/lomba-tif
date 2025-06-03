@@ -113,7 +113,7 @@ const Dashboardjuri: React.FC = () => {
     if (idUser) {
       const fetchJuriId = async () => {
         try {
-          const res = await fetch(`http://localhost:3000/juri/${idUser}`, {
+          const res = await fetch(`https://hono-api-lomba-tif-production.up.railway.app/juri/${idUser}`, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -139,7 +139,7 @@ const Dashboardjuri: React.FC = () => {
     if (juriId) {
       const fetchSubmissions = async () => {
         try {
-          const res = await fetch(`http://localhost:3000/penilaian/${juriId}`, {
+          const res = await fetch(`https://hono-api-lomba-tif-production.up.railway.app/penilaian/${juriId}`, {
             credentials: "include",
           });
           if (!res.ok) throw new Error("Failed to fetch submissions");
@@ -182,7 +182,7 @@ const Dashboardjuri: React.FC = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/submit/${selectedSubmission}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/submit/${selectedSubmission}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -229,7 +229,7 @@ const Dashboardjuri: React.FC = () => {
       setLoading(true);
 
       const res = await fetch(
-        `http://localhost:3000/penilaian/${selectedSubmission}/${juriId}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/penilaian/${selectedSubmission}/${juriId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

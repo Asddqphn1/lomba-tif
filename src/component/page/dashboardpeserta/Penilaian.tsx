@@ -51,7 +51,7 @@ function Penilaian() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:3000/penilaian/peserta/${idUser}/penilaian`,
+          `https://hono-api-lomba-tif-production.up.railway.app/penilaian/peserta/${idUser}/penilaian`,
           {
             headers: {
               "Content-Type": "application/json",
