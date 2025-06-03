@@ -29,7 +29,7 @@ const FormDaftarLomba: React.FC = () => {
 
   // Fetch the user ID from the JWT token in cookies
   useEffect(() => {
-    fetch("http://localhost:3000/auth/me", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/auth/me", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,12 +42,15 @@ const FormDaftarLomba: React.FC = () => {
   // Fetch lomba details based on `idlomba`
   useEffect(() => {
     if (idlomba) {
-      fetch(`http://localhost:3000/daftarlomba/${idlomba}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      })
+      fetch(
+        `https://hono-api-lomba-tif-production.up.railway.app/daftarlomba/${idlomba}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setLomba(data.data);
@@ -101,7 +104,7 @@ const FormDaftarLomba: React.FC = () => {
         nama_anggota: isTim ? formData.anggota_tim : undefined,
       };
       const response = await fetch(
-        `http://localhost:3000/daftarpeserta/${userId}/${idlomba}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/daftarpeserta/${userId}/${idlomba}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

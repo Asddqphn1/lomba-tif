@@ -26,7 +26,7 @@ const UsersSection: React.FC = () => {
   const [dataPeserta, setDataPeserta] = useState<Peserta[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/users", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +42,9 @@ const UsersSection: React.FC = () => {
       })
       .then((data) => {
         console.log(data.data);
-        setDataPeserta(data.data.filter((user: Peserta) => user.role === "USERS"));
+        setDataPeserta(
+          data.data.filter((user: Peserta) => user.role === "USERS")
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -73,11 +75,14 @@ const UsersSection: React.FC = () => {
     // Jika user menekan "Ya, hapus!"
     if (confirmation.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:3000/users/${id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
+        const response = await fetch(
+          `https://hono-api-lomba-tif-production.up.railway.app/users/${id}`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
 
         if (response.ok) {
           // Update state: Hapus user dari dataPeserta

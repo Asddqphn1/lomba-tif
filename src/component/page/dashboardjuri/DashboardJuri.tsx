@@ -89,13 +89,17 @@ const Dashboardjuri: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:3000/auth/me", {
-          credentials: "include",
-        });
+        const res = await fetch(
+          "https://hono-api-lomba-tif-production.up.railway.app/auth/me",
+          {
+            credentials: "include",
+          }
+        );
         if (!res.ok) throw new Error("Failed to fetch user");
         const data = await res.json();
         setProfile(data.user);
         setIdUser(data.user.id);
+        console.log("User ID:", data.user.id);
         console.log("User ID:", data.user.id);
       } catch (error) {
         console.error("Error fetching user:", error);

@@ -52,7 +52,7 @@ const SertifikatSection: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/sertifikat/${idLomba}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/sertifikat/${idLomba}`,
         {
           method: "POST",
           headers: {

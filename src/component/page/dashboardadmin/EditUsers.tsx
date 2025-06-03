@@ -49,13 +49,16 @@ const EditUsers: React.FC<Props> = ({
 
   const fetchLombaOptions = async () => {
     try {
-      const response = await fetch("http://localhost:3000/daftarlomba", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://hono-api-lomba-tif-production.up.railway.app/daftarlomba",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Gagal memuat daftar lomba");
@@ -78,17 +81,20 @@ const EditUsers: React.FC<Props> = ({
     setAlert({ type: null, message: "" });
 
     try {
-      const response = await fetch(`http://localhost:3000/juri/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          namaJuri: namaJuri,
-          id_lomba: lombaId,
-        }),
-      });
+      const response = await fetch(
+        `https://hono-api-lomba-tif-production.up.railway.app/juri/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            namaJuri: namaJuri,
+            id_lomba: lombaId,
+          }),
+        }
+      );
 
       const data = await response.json();
 

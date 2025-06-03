@@ -26,7 +26,7 @@ const ProfileSection: React.FC = () => {
   const [data, setData] = useState<dataUser>()
   const navigate = useNavigate() 
   useEffect(() => {
-      fetch("http://localhost:3000/auth/me", {
+      fetch("https://hono-api-lomba-tif-production.up.railway.app/auth/me", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -41,13 +41,16 @@ const ProfileSection: React.FC = () => {
   
 
     const handleLogout = () => {
-      fetch("http://localhost:3000/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      })
+      fetch(
+        "https://hono-api-lomba-tif-production.up.railway.app/logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      )
         .then((response) => {
           if (!response.ok) throw new Error("Logout failed");
           return response.json();

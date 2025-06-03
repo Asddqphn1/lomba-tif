@@ -49,14 +49,17 @@ const DaftarJuriaAdmin: React.FC = () => {
     updateData: { nama: string; lomba_id: string }
   ) => {
     try {
-      const response = await fetch(`http://localhost:3000/juri/juri/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(updateData),
-      });
+      const response = await fetch(
+        `https://hono-api-lomba-tif-production.up.railway.app/juri/juri/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(updateData),
+        }
+      );
 
       if (response.status === 401) {
         navigasi("/login", { replace: true });
@@ -111,20 +114,23 @@ const DaftarJuriaAdmin: React.FC = () => {
     const fetchData = async () => {
       try {
         const [juriResponse, lombaResponse] = await Promise.all([
-          fetch("http://localhost:3000/juri", {
+          fetch("https://hono-api-lomba-tif-production.up.railway.app/juri", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
             credentials: "include",
           }),
-          fetch("http://localhost:3000/daftarlomba", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }),
+          fetch(
+            "https://hono-api-lomba-tif-production.up.railway.app/daftarlomba",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          ),
         ]);
 
         if (juriResponse.status === 401 || lombaResponse.status === 401) {
@@ -156,13 +162,16 @@ const DaftarJuriaAdmin: React.FC = () => {
       cancelButtonText: "Batal",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/juri/hapus/${id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        })
+        fetch(
+          `https://hono-api-lomba-tif-production.up.railway.app/juri/hapus/${id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        )
           .then((response) => {
             if (response.status === 401) {
               navigasi("/login", { replace: true });
@@ -196,7 +205,7 @@ const DaftarJuriaAdmin: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/juri", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/juri", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

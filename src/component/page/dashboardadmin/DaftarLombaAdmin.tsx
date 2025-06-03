@@ -52,12 +52,15 @@ const DaftarLombaAdmin: React.FC = () => {
   useEffect(() => {
     const fetchCompetitions = async () => {
       try {
-        const response = await fetch("http://localhost:3000/daftarlomba", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          "https://hono-api-lomba-tif-production.up.railway.app/daftarlomba",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch competitions");
@@ -87,7 +90,7 @@ const DaftarLombaAdmin: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/daftarlomba/${competitionToDelete}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/daftarlomba/${competitionToDelete}`,
         {
           method: "DELETE",
           headers: {

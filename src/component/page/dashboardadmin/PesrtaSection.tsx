@@ -51,7 +51,7 @@ const PesertaSection: React.FC = () => {
 
   // Fetch lomba options when component mounts
   useEffect(() => {
-    fetch("http://localhost:3000/daftarlomba", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/daftarlomba", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -66,13 +66,16 @@ const PesertaSection: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/daftarpeserta?jenis=${jenis}&lomba=${lomba}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
+    fetch(
+      `https://hono-api-lomba-tif-production.up.railway.app/daftarpeserta?jenis=${jenis}&lomba=${lomba}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    )
       .then((response) => {
         if (response.status === 401) {
           navigasi("/login", { replace: true });
@@ -88,7 +91,7 @@ const PesertaSection: React.FC = () => {
   const handleViewTeam = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/daftarpeserta/anggotatim/${id}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/daftarpeserta/anggotatim/${id}`,
         {
           headers: {
             "Content-Type": "application/json",

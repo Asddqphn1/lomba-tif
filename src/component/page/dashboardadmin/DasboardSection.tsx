@@ -73,13 +73,16 @@ export function DashboardSection() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/daftarpeserta", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
+    fetch(
+      "https://hono-api-lomba-tif-production.up.railway.app/daftarpeserta",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    )
       .then((response) => {
         if (response.status === 401) {
           navigate("/adminonly", { replace: true });
@@ -90,7 +93,7 @@ export function DashboardSection() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/juri", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/juri", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +105,7 @@ export function DashboardSection() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/daftarlomba", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/daftarlomba", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +120,7 @@ export function DashboardSection() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/users", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

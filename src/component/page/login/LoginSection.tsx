@@ -16,14 +16,17 @@ const LoginSection: React.FC = () => {
 
     try {
       // 1. Lakukan login terlebih dahulu
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://hono-api-lomba-tif-production.up.railway.app/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
@@ -35,15 +38,20 @@ const LoginSection: React.FC = () => {
       console.log(data.message);
 
       // 2. Setelah login berhasil, ambil data user terbaru
-      const userResponse = await fetch("http://localhost:3000/auth/me", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const userResponse = await fetch(
+        "https://hono-api-lomba-tif-production.up.railway.app/auth/me",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (!userResponse.ok) {
+        console.log(userResponse);
         throw new Error("Failed to get user data");
+        
       }
 
       const userData = await userResponse.json();

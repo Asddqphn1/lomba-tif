@@ -28,13 +28,16 @@ const DaftarLombaSection: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/daftarlomba", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
+    fetch(
+      "https://hono-api-lomba-tif-production.up.railway.app/daftarlomba",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

@@ -38,9 +38,15 @@ function AdminSidebar() {
   useEffect(() => {
       const fetchUser = async () => {
         try {
-          const res = await fetch("http://localhost:3000/auth/me", {
-            credentials: "include",
-          });
+          const res = await fetch(
+            "https://hono-api-lomba-tif-production.up.railway.app/auth/me",
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
           if (!res.ok) throw new Error("Failed to fetch user");
           const data = await res.json();
           setProfile(data.user);

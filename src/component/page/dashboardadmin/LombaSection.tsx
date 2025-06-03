@@ -192,12 +192,15 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
               : null, // Kirim null untuk INDIVIDU
         };
 
-        const response = await fetch("http://localhost:3000/daftarlomba", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        });
+        const response = await fetch(
+          "https://hono-api-lomba-tif-production.up.railway.app/daftarlomba",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(payload),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
