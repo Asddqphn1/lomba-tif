@@ -63,7 +63,7 @@ const SubmissionSection: React.FC = () => {
 
   useEffect(() => {
     // Fetch user data
-    fetch("http://localhost:3000/auth/me", {
+    fetch("https://hono-api-lomba-tif-production.up.railway.app/auth/me", {
       credentials: "include",
     })
       .then((res) => {
@@ -78,7 +78,7 @@ const SubmissionSection: React.FC = () => {
     if (!iduser) return;
 
     setLoading(true);
-    fetch(`http://localhost:3000/daftarlomba/userlomba/${iduser}`, {
+    fetch(`https://hono-api-lomba-tif-production.up.railway.app/daftarlomba/userlomba/${iduser}`, {
       credentials: "include",
     })
       .then((res) => {

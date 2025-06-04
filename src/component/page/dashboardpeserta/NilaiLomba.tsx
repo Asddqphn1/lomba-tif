@@ -33,7 +33,7 @@ const NilaiLomba: React.FC = () => {
     const fetchJudges = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/penilaian/peserta/${idUser}`,
+          `https://hono-api-lomba-tif-production.up.railway.app/penilaian/peserta/${idUser}`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -76,7 +76,7 @@ const Klasmen: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/penilaian/daftarnilai/${idLomba}`, {
+    fetch(`https://hono-api-lomba-tif-production.up.railway.app/penilaian/daftarnilai/${idLomba}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -90,7 +90,7 @@ const Klasmen: React.FC = () => {
   }, [idLomba]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/daftarlomba/${idLomba}`, {
+    fetch(`https://hono-api-lomba-tif-production.up.railway.app/daftarlomba/${idLomba}`, {
       headers: {
         "Content-Type": "application/json",
       },
