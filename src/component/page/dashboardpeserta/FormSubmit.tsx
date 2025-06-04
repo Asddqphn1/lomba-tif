@@ -86,7 +86,7 @@ const FormSubmit: React.FC = () => {
     const checkSubmission = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/submit/submission/${idpeserta}`,
+          `https://hono-api-lomba-tif-production.up.railway.app/submit/submission/${idpeserta}`,
           {
             credentials: "include",
           }
@@ -141,7 +141,7 @@ const FormSubmit: React.FC = () => {
   const handleDeleteSubmission = async (submissionId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/submit/hapus/${submissionId}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/submit/hapus/${submissionId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -182,7 +182,7 @@ const FormSubmit: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/submit/${idpeserta}`,
+        `https://hono-api-lomba-tif-production.up.railway.app/submit/${idpeserta}`,
         {
           method: "POST",
           credentials: "include",
