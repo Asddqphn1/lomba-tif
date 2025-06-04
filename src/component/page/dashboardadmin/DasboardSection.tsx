@@ -174,7 +174,7 @@ export function DashboardSection() {
     <>
       <header className="bg-white shadow-sm">
         <div className="flex justify-between items-center p-4">
-          <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Dashboard Admin</h1>
         </div>
       </header>
       <div className="p-6 h-screen w-[93vw]">

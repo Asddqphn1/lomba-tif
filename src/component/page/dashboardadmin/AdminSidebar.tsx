@@ -117,7 +117,7 @@ function AdminSidebar() {
 
   return (
     <motion.div
-      className="flex"
+      className="flex flex-col md:flex-row w-full min-h-screen"
       initial="hidden"
       animate="visible"
       variants={containerVariants}

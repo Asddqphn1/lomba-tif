@@ -137,13 +137,25 @@ const PesertaSection: React.FC = () => {
 
       <div className="mb-6">
         <div className="flex gap-4 mb-4">
-          <Button variant="outline" onClick={() => setJenis("")}>
+          <Button
+            variant="outline"
+            onClick={() => setJenis("")}
+            className="bg-green-500 text-white"
+          >
             Semua Kategori
           </Button>
-          <Button variant="outline" onClick={() => setJenis("TIM")}>
+          <Button
+            variant="outline"
+            onClick={() => setJenis("TIM")}
+            className="bg-orange-500 text-white"
+          >
             TIM
           </Button>
-          <Button variant="outline" onClick={() => setJenis("INDIVIDU")}>
+          <Button
+            variant="outline"
+            onClick={() => setJenis("INDIVIDU")}
+            className="bg-blue-500 text-white"
+          >
             INDIVIDU
           </Button>
 
@@ -173,14 +185,27 @@ const PesertaSection: React.FC = () => {
                 <TableCell className="font-bold">{index + 1}</TableCell>
                 <TableCell>{participant.nama}</TableCell>
                 <TableCell>
-                  {participant.pesertalomba[0].lomba?.jenis_lomba}
+                  <div
+                    className={
+                      participant.pesertalomba[0].lomba?.jenis_lomba === "TIM"
+                        ? "bg-orange-500 text-white p-2 rounded-3xl text-md w-30 flex justify-center items-center"
+                        : participant.pesertalomba[0].lomba?.jenis_lomba ===
+                          "INDIVIDU"
+                        ? "bg-blue-100 p-2 rounded-3xl text-xs flex justify-center items-center"
+                        : ""
+                    }
+                  >
+                    {participant.pesertalomba[0].lomba?.jenis_lomba}
+                  </div>
                 </TableCell>
+
                 <TableCell>{participant.pesertalomba[0].lomba?.nama}</TableCell>
                 <TableCell>{FormatTanggal(participant.created_at)}</TableCell>
                 <TableCell>
                   {participant.pesertalomba[0].lomba?.jenis_lomba === "TIM" && (
                     <Button
                       variant="outline"
+                      className="mr-2 P-2 bg-pink-300"
                       size="sm"
                       onClick={() => handleViewTeam(participant.id)}
                     >

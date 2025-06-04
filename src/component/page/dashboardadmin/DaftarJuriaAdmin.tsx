@@ -243,7 +243,7 @@ const DaftarJuriaAdmin: React.FC = () => {
               <TableHead className="w-1/3">EMAIL</TableHead>
               <TableHead className="w-1/4">CABANG LOMBA</TableHead>
               <TableHead className="w-1/6">TANGGAL LOMBA</TableHead>
-              <TableHead className="w-1/6">AKSI</TableHead>
+              <TableHead className="w-1/4">AKSI</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -258,17 +258,21 @@ const DaftarJuriaAdmin: React.FC = () => {
                 <TableCell>
                   <Button
                     variant="ghost"
+                    className="mr-2 P-2 bg-green-300"
                     size="sm"
                     onClick={() => openEditModal(juri)}
                   >
                     <Pencil />
+                    EDIT
                   </Button>
                   <Button
                     variant="ghost"
+                    className="mr-2 P-2 bg-red-300"
                     size="sm"
                     onClick={() => handleDelete(juri.id, juri.nama)}
                   >
                     <Trash2 />
+                    HAPUS
                   </Button>
                 </TableCell>
               </TableRow>

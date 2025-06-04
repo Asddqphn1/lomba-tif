@@ -137,19 +137,23 @@ const UsersSection: React.FC = () => {
                 <TableCell>
                   <Button
                     variant="ghost"
+                    className="mr-2 P-2 bg-green-300"
                     size="sm"
                     onClick={() => handleEditClick(participant.id)} // Open the modal for this user
                   >
                     <Pencil />
+                    EDIT
                   </Button>
                   <Button
                     variant="ghost"
+                    className="mr-2 P-2 bg-red-300"
                     size="sm"
                     onClick={() => {
                       handleDeleteUser(participant.id);
                     }}
                   >
                     <Trash2 />
+                    HAPUS
                   </Button>
 
                   {/* Show Edit modal for this participant */}
