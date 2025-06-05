@@ -203,8 +203,8 @@ const MainDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-10">
-          <Card className="shadow-lg rounded-lg p-6 w-1/2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
+          <Card className="shadow-lg rounded-lg p-6 w-full">
             <CardHeader>
               <h2 className="text-2xl font-semibold text-gray-900">
                 Lomba List
@@ -247,7 +247,7 @@ const MainDashboard: React.FC = () => {
               </button>
             </CardFooter>
           </Card>
-          <Card className="shadow-lg rounded-lg p-6 w-1/2">
+          <Card className="shadow-lg rounded-lg p-6 w-full">
             <CardHeader>
               <CardTitle className="text-lg">Partisipasi Lomba</CardTitle>
             </CardHeader>

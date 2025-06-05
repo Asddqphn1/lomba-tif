@@ -66,7 +66,7 @@ const ProfileSection: React.FC = () => {
     };
 
   return (
-    <div className="min-h-[90vh] bg-gray-50 flex flex-col items-center justify-center p-4 w-[93vw]">
+    <div className="min-h-[90vh] bg-gray-50 flex flex-col items-center justify-center p-4 w-[93vw] absolute top-10 lg:relative lg:top-0">
       <div className="w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Profil Pengguna

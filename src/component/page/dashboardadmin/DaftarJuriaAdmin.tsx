@@ -227,7 +227,7 @@ const DaftarJuriaAdmin: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6 absolute w-full top-10 lg:relative lg:top-0">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">Admin Lomba</h1>
       </div>
@@ -235,8 +235,8 @@ const DaftarJuriaAdmin: React.FC = () => {
 
       <div className="mb-6"></div>
 
-      <div className="w-[92vw]">
-        <Table className="border table-fixed overflow-auto">
+      <div className="overflow-x-auto w-full lg:w-[93vw]">
+        <Table className="border table-auto min-w-full">
           <TableHeader>
             <TableRow>
               <TableHead className="w-1/3">JURI</TableHead>

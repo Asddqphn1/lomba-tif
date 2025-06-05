@@ -574,7 +574,7 @@ const BerandaSection: React.FC = () => {
             </div>
             <div className="flex items-center">
               <img
-                src="https://readdy.ai/api/search-image?query=UIN%20Sultan%20Syarif%20Kasim%20Riau%20logo%2C%20official%20university%20emblem%2C%20professional%20educational%20institution%20symbol%2C%20clean%20design%20on%20transparent%20background&width=120&height=60&seq=uinlogo&orientation=landscape"
+                src="/logo.png"
                 alt="UIN Suska Riau"
                 className="h-10 mr-4"
               />

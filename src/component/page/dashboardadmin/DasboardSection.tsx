@@ -172,12 +172,12 @@ export function DashboardSection() {
   };
   return (
     <>
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm absolute top-5 lg:relative">
         <div className="flex justify-between items-center p-4">
           <h1 className="text-2xl font-semibold text-gray-800">Dashboard Admin</h1>
         </div>
       </header>
-      <div className="p-6 h-screen w-[93vw]">
+      <div className="p-6 h-screen w-[93vw] absolute top-16 lg:relative ">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">

@@ -139,9 +139,9 @@ const DaftarLombaAdmin: React.FC = () => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center w-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto" />
           <p className="mt-4 text-gray-600">Memuat daftar lomba...</p>
         </div>
       </div>
@@ -166,7 +166,7 @@ const DaftarLombaAdmin: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 ">
-      <div className=" w-[93vw] mx-auto px-4 py-8">
+      <div className=" w-[93vw] mx-auto px-4 py-8 absolute top-0 lg:relative">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-2xl font-bold text-gray-800">Daftar Lomba</h1>
@@ -195,7 +195,7 @@ const DaftarLombaAdmin: React.FC = () => {
         </div>
 
         {/* Competition Cards Grid */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCompetitions.map((competition) => (
             <Card
               key={competition.id}

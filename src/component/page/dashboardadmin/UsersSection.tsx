@@ -112,14 +112,14 @@ const UsersSection: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 absolute w-full top-10 lg:relative lg:top-0">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">User Management</h1>
       </div>
       <h2 className="text-xl font-semibold mb-6">Daftar Users</h2>
 
-      <div className="w-[92vw]">
-        <Table className="border table-fixed overflow-auto">
+      <div className="overflow-x-auto w-full lg:w-[93vw]">
+        <Table className="border table-auto min-w-full">
           <TableHeader>
             <TableRow>
               <TableHead className="w-1/6">USER</TableHead>
@@ -163,7 +163,8 @@ const UsersSection: React.FC = () => {
                       username={participant.nama}
                       email={participant.email}
                       open={true}
-                      onClose={handleCloseModal}                    />
+                      onClose={handleCloseModal}
+                    />
                   )}
                 </TableCell>
               </TableRow>

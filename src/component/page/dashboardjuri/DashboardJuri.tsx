@@ -6,7 +6,6 @@ import { icons } from "lucide-react";
 import { FormatTanggal } from "@/helper/FormatTanggal";
 import Swal from "sweetalert2";
 import ProfileSection from "../profile/ProfileSection";
-
 interface profile {
   id: string;
   nama: string;
@@ -49,7 +48,7 @@ interface Submission {
     nilai_penilaian: number;
     deksripsi_penilaian: string;
     created_at: string;
-  };
+  }[]; // Change to array of penilaian
 }
 
 interface juriId {
@@ -276,6 +275,23 @@ const Dashboardjuri: React.FC = () => {
         Swal.fire("Direset!", "Form berhasil dikosongkan.", "success");
       }
     });
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(submission.length / itemsPerPage);
+
+  // Get current submissions
+  const currentSubmissions = submission.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
 
@@ -551,12 +567,6 @@ const Dashboardjuri: React.FC = () => {
               />
               <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
             </div>
-
-            <select className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="all">Semua Status</option>
-              <option value="pending">Belum Dinilai</option>
-              <option value="done">Sudah Dinilai</option>
-            </select>
           </div>
         </div>
 
@@ -574,6 +584,9 @@ const Dashboardjuri: React.FC = () => {
                   Tanggal
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Aksi
                 </th>
               </tr>
@@ -589,6 +602,17 @@ const Dashboardjuri: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {FormatTanggal(submission.submission_time, true)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {submission.penilaian && submission.penilaian.length > 0 ? (
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        Sudah Dinilai
+                      </span>
+                    ) : (
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        Belum Dinilai
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
@@ -610,17 +634,52 @@ const Dashboardjuri: React.FC = () => {
 
         <div className="flex justify-between items-center mt-4">
           <p className="text-sm text-gray-500">
-            Menampilkan 1-4 dari 4 submission
+            Menampilkan{" "}
+            {Math.min(currentPage * itemsPerPage, submission.length)} dari{" "}
+            {submission.length} submission
           </p>
           <div className="flex">
-            <button className="px-3 py-1 border rounded-l-lg bg-gray-100 text-gray-600 cursor-pointer !rounded-button whitespace-nowrap">
-              <i className="fas fa-chevron-left"></i>
+            <button
+              className={`px-3 py-1 border rounded-l-lg ${
+                currentPage === 1
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 text-gray-600 cursor-pointer"
+              }`}
+              onClick={() =>
+                currentPage > 1 && handlePageChange(currentPage - 1)
+              }
+              disabled={currentPage === 1}
+            >
+              <icons.ChevronLeft />
             </button>
-            <button className="px-3 py-1 border-t border-b border-r bg-blue-600 text-white cursor-pointer !rounded-button whitespace-nowrap">
-              1
-            </button>
-            <button className="px-3 py-1 border-t border-b border-r rounded-r-lg bg-gray-100 text-gray-600 cursor-pointer !rounded-button whitespace-nowrap">
-              <i className="fas fa-chevron-right"></i>
+
+            {/* Page numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`px-3 py-1 border-t border-b border-r ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-600"
+                }`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              className={`px-3 py-1 border-t border-b border-r rounded-r-lg ${
+                currentPage === totalPages
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 text-gray-600 cursor-pointer"
+              }`}
+              onClick={() =>
+                currentPage < totalPages && handlePageChange(currentPage + 1)
+              }
+              disabled={currentPage === totalPages}
+            >
+              <icons.ChevronRight />
             </button>
           </div>
         </div>
