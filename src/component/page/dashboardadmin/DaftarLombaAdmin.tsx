@@ -32,13 +32,6 @@ const DaftarLombaAdmin: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
-  const [alert, setAlert] = useState<{
-    type: "success" | "error" | null;
-    message: string;
-  }>({
-    type: null,
-    message: "",
-  });
   const [error, setError] = useState<string | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
@@ -104,19 +97,12 @@ const DaftarLombaAdmin: React.FC = () => {
         setCompetitions(
           competitions.filter((comp) => comp.id !== competitionToDelete)
         );
-        setAlert({
-          type: "success",
-          message: "Lomba berhasil dihapus!",
-        });
+        
       } else {
         throw new Error("Gagal menghapus lomba");
       }
     } catch (error) {
-      setAlert({
-        type: "error",
-        message:
-          error instanceof Error ? error.message : "Gagal menghapus lomba",
-      });
+
     } finally {
       setDeleteDialogOpen(false);
       setCompetitionToDelete(null);

@@ -30,7 +30,7 @@ interface ProcessedTeamData {
 
 const Klasmen: React.FC = () => {
   const { idLomba } = useParams();
-  const [teams, setTeams] = useState<TeamData[]>([]);
+
   const [processedTeams, setProcessedTeams] = useState<ProcessedTeamData[]>([]);
   const [namaLomba, setNamaLomba] = useState<string>("");
   const [tanggal, setTanggal] = useState<string>("");
@@ -84,7 +84,6 @@ const Klasmen: React.FC = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setTeams(data.data);
         processTeamsData(data.data);
       });
   }, [idLomba]);
@@ -105,9 +104,8 @@ const Klasmen: React.FC = () => {
 
   useEffect(() => {
     if (processedTeams.length > 0) {
-      const animationDuration = 2;
       const steps = 60;
-      const incrementTimes = (animationDuration * 1000) / steps;
+      
 
       const timers = processedTeams.slice(0, 3).map((team, index) => {
         const targetPoints = team.rataRata; // Sudah dibulatkan di processTeamsData

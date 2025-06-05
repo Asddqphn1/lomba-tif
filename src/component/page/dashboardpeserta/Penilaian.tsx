@@ -1,5 +1,5 @@
 import { FormatTanggal } from "@/helper/FormatTanggal";
-import { Trophy, User, Users, X } from "lucide-react"; // Import icon X untuk tombol close
+import { Trophy, User, Users} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -36,10 +36,7 @@ function Penilaian() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataPenilaian, setDataPenilaian] = useState<PenilaianProps[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedDeskripsi, setSelectedDeskripsi] = useState<string | null>(
-    null
-  );
+  
   const navigate = useNavigate();
 
   const handleLihatKlasmen = (idLomba: string) => {

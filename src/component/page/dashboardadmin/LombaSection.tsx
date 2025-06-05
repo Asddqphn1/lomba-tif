@@ -50,7 +50,6 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -209,7 +208,6 @@ const LombaSection: React.FC<prorpsOpen> = ({ open, onClose }) => {
 
         const data = await response.json();
 
-        setIsSuccess(true);
         Swal.fire({
           title: "Sukses",
           text: data.message || "Lomba berhasil ditambahkan",

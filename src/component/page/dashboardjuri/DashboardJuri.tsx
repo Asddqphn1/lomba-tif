@@ -283,12 +283,6 @@ const Dashboardjuri: React.FC = () => {
   // Calculate total pages
   const totalPages = Math.ceil(submission.length / itemsPerPage);
 
-  // Get current submissions
-  const currentSubmissions = submission.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
