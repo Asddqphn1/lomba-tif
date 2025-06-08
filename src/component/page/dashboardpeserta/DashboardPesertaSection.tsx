@@ -11,16 +11,59 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { icons } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainDashboard from "./MainDashboard";
 import DaftarLombaSection from "../daftarlomba/DaftarLombaSection";
 import ProfileSection from "../profile/ProfileSection";
 import SubmissionSection from "./SubmissionSection";
 import Penilaian from "./Penilaian";
+import { motion } from "framer-motion";
+
+interface profile {
+  id: string;
+  nama: string;
+  email: string;
+  role: string;
+}
 
 const DashboardPesertaSection: React.FC = () => {
   const [open, setOpen] = useState<boolean>(true);
   const [openSide, setOpenSide] = useState<string>("dashboard");
+  const [profile, setProfile] = useState<profile>();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(
+          "https://hono-api-lomba-tif-production.up.railway.app/auth/me",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = await res.json();
+        setProfile(data.user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   const renderContent = () => {
     switch (openSide) {
       case "dashboard":
@@ -30,9 +73,9 @@ const DashboardPesertaSection: React.FC = () => {
       case "profile":
         return <ProfileSection />;
       case "submission":
-        return <SubmissionSection/>
+        return <SubmissionSection />;
       case "penilaian":
-        return <Penilaian/>
+        return <Penilaian />;
     }
   };
   return (
@@ -101,6 +144,20 @@ const DashboardPesertaSection: React.FC = () => {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+            <motion.div
+              className="p-4 border-t border-blue-600 mt-auto"
+              variants={itemVariants}
+            >
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+                  <icons.User className="text-white" />
+                </div>
+                <div>
+                  <p className="font-medium text-white">{profile?.nama}</p>
+                  <p className="text-sm text-blue-200">{profile?.role}</p>
+                </div>
+              </div>
+            </motion.div>
           </SidebarContent>
         </Sidebar>
         <SidebarTrigger />
