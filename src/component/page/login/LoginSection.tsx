@@ -198,7 +198,7 @@ const LoginSection: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-6 gap-3">
               <button
                 type="button"
                 onClick={handleGoogleLogin}
@@ -206,25 +206,27 @@ const LoginSection: React.FC = () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 488 512"
+                  viewBox="0 0 48 48"
                   className="h-5 w-5"
                 >
-                  <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+                  <path
+                    fill="#4285F4" // Blue
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                  />
+                  <path
+                    fill="#34A853" // Green
+                    d="M46.98 24.55c0-1.7-.15-3.35-.43-4.94H24v9.37h12.84c-.56 2.96-2.24 5.48-4.78 7.18l7.98 6.19c4.63-4.27 7.94-10.61 7.94-17.8z"
+                  />
+                  <path
+                    fill="#FBBC05" // Yellow
+                    d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                  />
+                  <path
+                    fill="#EA4335" // Red
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.98-6.19c-2.24 1.5-5.08 2.39-7.91 2.39-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                  />
                 </svg>
                 <span className="ml-2">Google</span>
-              </button>
-              <button
-                type="button"
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  className="h-5 w-5 text-blue-600"
-                >
-                  <path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z" />
-                </svg>
-                <span className="ml-2">Facebook</span>
               </button>
             </div>
           </div>
