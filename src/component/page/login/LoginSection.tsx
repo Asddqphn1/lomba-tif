@@ -85,6 +85,11 @@ const LoginSection: React.FC = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href =
+      "https://hono-api-lomba-tif-production.up.railway.app/auth/google";
+  };
+
   return (
     <div className="bg-[url(/logotiflomba.jpeg)] bg-cover bg-center bg-no-repeat">
       <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 backdrop-blur-sm">
@@ -165,15 +170,6 @@ const LoginSection: React.FC = () => {
                     Remember me
                   </label>
                 </div>
-
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-medium text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
               </div>
             </div>
 
@@ -205,6 +201,7 @@ const LoginSection: React.FC = () => {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               >
                 <svg
