@@ -586,42 +586,51 @@ const Dashboardjuri: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {submission.map((submission) => (
-                <tr key={submission.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {submission.pesertalomba.peserta.nama}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {submission.pesertalomba.lomba.nama}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {FormatTanggal(submission.submission_time, true)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {submission.penilaian && submission.penilaian.length > 0 ? (
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        Sudah Dinilai
-                      </span>
-                    ) : (
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                        Belum Dinilai
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
-                      onClick={() => {
-                        setActiveTab("penilaian");
-                        handleFetchSubmission();
-                        setSelectedSubmission(submission.id);
-                      }}
-                    >
-                      <i className="fas fa-star mr-1"></i> Nilai
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {submission
+                .slice()
+                .sort(
+                  (a, b) =>
+                    new Date(b.submission_time).getTime() -
+                    new Date(a.submission_time).getTime()
+                )
+                .slice(0, 3)
+                .map((submission) => (
+                  <tr key={submission.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.pesertalomba.peserta.nama}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.pesertalomba.lomba.nama}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {FormatTanggal(submission.submission_time, true)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.penilaian &&
+                      submission.penilaian.length > 0 ? (
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          Sudah Dinilai
+                        </span>
+                      ) : (
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                          Belum Dinilai
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer !rounded-button whitespace-nowrap"
+                        onClick={() => {
+                          setActiveTab("penilaian");
+                          handleFetchSubmission();
+                          setSelectedSubmission(submission.id);
+                        }}
+                      >
+                        <i className="fas fa-star mr-1"></i> Nilai
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
