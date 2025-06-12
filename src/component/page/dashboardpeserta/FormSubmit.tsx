@@ -117,11 +117,13 @@ const FormSubmit: React.FC = () => {
       formdata.append("file", imageFile);
       formdata.append("upload_preset", "lombapost");
 
-      // Check if the file is a PDF or image
-      const endpoint =
-        imageFile.type === "application/pdf"
-          ? "https://api.cloudinary.com/v1_1/dkkoi3qc0/raw/upload"
-          : "https://api.cloudinary.com/v1_1/dkkoi3qc0/image/upload";
+      // --- FIX 1: Logika Penentuan Endpoint yang Lebih Baik ---
+      // Jika tipe file diawali dengan 'image/', gunakan endpoint image.
+      // Untuk tipe lain (pdf, docx, zip, dll.), gunakan endpoint raw.
+      const isImage = imageFile.type.startsWith("image/");
+      const endpoint = isImage
+        ? "https://api.cloudinary.com/v1_1/dkkoi3qc0/image/upload"
+        : "https://api.cloudinary.com/v1_1/dkkoi3qc0/raw/upload";
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -129,14 +131,40 @@ const FormSubmit: React.FC = () => {
       });
 
       const data = await response.json();
+
+      // --- FIX 2: Pengecekan Status Respons ---
+      // Periksa apakah respons dari Cloudinary tidak OK (bukan status 2xx).
+      // Jika tidak OK, lemparkan error agar ditangkap oleh block `catch`.
+      if (!response.ok) {
+        // Ambil pesan error dari Cloudinary jika ada, jika tidak buat pesan default
+        throw new Error(
+          data.error?.message || "Gagal mengupload file ke Cloudinary."
+        );
+      }
+
+      // Jika berhasil, panggil handleSubmit dengan URL yang aman
       await handleSubmit(data.secure_url);
     } catch (error) {
       console.error("Upload error:", error);
-      setErrors({ ...errors, file: "Gagal mengupload file" });
+      // Tampilkan error yang sebenarnya di Swal
+      Swal.fire({
+        title: "Gagal Upload!",
+        text:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan yang tidak diketahui.",
+        icon: "error",
+      });
+      // Anda juga bisa set error ke state di sini jika perlu
+      setErrors({
+        ...errors,
+        file: error instanceof Error ? error.message : "Gagal mengupload file",
+      });
     } finally {
       setIsUploading(false);
     }
   };
+
 
   const handleDeleteSubmission = async (submissionId: string) => {
     try {
