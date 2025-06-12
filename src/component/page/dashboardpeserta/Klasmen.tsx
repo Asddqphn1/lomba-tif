@@ -182,7 +182,7 @@ const Klasmen: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/sertifikat/${idLomba}`, {
+    fetch(`https://hono-api-lomba-tif-production.up.railway.app/sertifikat/${idLomba}`, {
       headers: {
         "Content-Type": "application/json",
       },
